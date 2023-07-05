@@ -17,3 +17,6 @@ local.properties
 .lock
 .tmp
 Thumbs.db
+/bin
+/out
+/target
