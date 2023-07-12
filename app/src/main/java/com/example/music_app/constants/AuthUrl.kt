@@ -8,4 +8,5 @@ const val REDIRECT_URL = "http://localhost:3000"
 const val STATE = "state"
 const val ERROR = "error"
 
-const val AUTH_URL = "https://accounts.spotify.com/authorize?client_id=$SPOTIFY_CLIENT_ID&response_type=$CODE&scope=$SCOPE&redirect_uri=$REDIRECT_URL"
+const val BASE_URL = "https://accounts.spotify.com"
+const val AUTH_URL = "$BASE_URL/authorize?client_id=$SPOTIFY_CLIENT_ID&response_type=$CODE&scope=$SCOPE&redirect_uri=$REDIRECT_URL"

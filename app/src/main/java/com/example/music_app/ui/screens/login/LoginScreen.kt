@@ -14,10 +14,10 @@ fun LoginScreen() {
     WebView(
         state,
         onCreated = { webView ->
-            webView.settings.javaScriptEnabled = true
-            webView.webViewClient = AppLoginWebViewClient()
+            with(webView) {
+                settings.javaScriptEnabled = true
+                webViewClient = AppLoginWebViewClient()
+            }
         }
     )
-
-
 }

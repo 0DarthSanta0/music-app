@@ -21,5 +21,4 @@ class AppLoginWebViewClient : WebViewClient() {
             val code = getQueryParameter(CODE)
         }
     }
-
 }
