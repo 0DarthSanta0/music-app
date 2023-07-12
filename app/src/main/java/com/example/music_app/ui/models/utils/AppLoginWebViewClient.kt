@@ -3,9 +3,10 @@ package com.example.music_app.ui.models.utils
 import android.net.Uri
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.example.music_app.constants.CODE
-import com.example.music_app.constants.ERROR
-import com.example.music_app.constants.STATE
+
+private const val STATE_QUERY_PARAM = "state"
+private const val ERROR_QUERY_PARAM = "error"
+private const val CODE_QUERY_PARAM = "code"
 
 class AppLoginWebViewClient : WebViewClient() {
     override fun onPageFinished(view: WebView?, url: String?) {
@@ -16,9 +17,9 @@ class AppLoginWebViewClient : WebViewClient() {
     private fun parseResponse(url: String?) {
         val uri = Uri.parse(url)
         with(uri) {
-            val state = getQueryParameter(STATE)
-            val error = getQueryParameter(ERROR)
-            val code = getQueryParameter(CODE)
+            val state = getQueryParameter(STATE_QUERY_PARAM)
+            val error = getQueryParameter(ERROR_QUERY_PARAM)
+            val code = getQueryParameter(CODE_QUERY_PARAM)
         }
     }
 }
