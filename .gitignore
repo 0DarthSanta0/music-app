@@ -1,3 +1,4 @@
+/.idea/
 *.iml
 .gradle
 /local.properties
@@ -51,9 +52,6 @@ gen/
 captures/
 
 obj/
-Since Android Studio 2.2 and up to 3.0, new projects are created with this gitignore file:
-
-Deprecated - for older project format, add this section to your gitignore file:
 
 /*/out
 /*/*/build
@@ -62,3 +60,4 @@ Deprecated - for older project format, add this section to your gitignore file:
 *.ipr
 *~
 *.swp
+
