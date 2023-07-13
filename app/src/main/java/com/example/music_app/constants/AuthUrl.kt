@@ -2,9 +2,21 @@ package com.example.music_app.constants
 
 const val SPOTIFY_CLIENT_ID = "67f6367abcd3497db54043591d9e7c9f"
 const val SPOTIFY_CLIENT_SECRET = "6a0137ad789a404db79c6e4d6625bf49"
+
 const val CODE = "code"
 const val SCOPE = "user-read-private user-read-email"
 const val REDIRECT_URL = "http://localhost:3000"
+const val GRANT_TYPE = "authorization_code"
+
+const val STATE_QUERY_PARAM = "state"
+const val ERROR_QUERY_PARAM = "error"
+const val CODE_QUERY_PARAM = "code"
+const val SCOPE_QUERY_PARAM = "scope"
+const val REDIRECT_QUERY_PARAM = "redirect_uri"
+const val GRANT_QUERY_PARAM = "grant_type"
+const val TYPE_QUERY_PARAM = "response_type"
+const val ID_QUERY_PARAM = "client_id"
 
 const val BASE_URL = "https://accounts.spotify.com"
-const val AUTH_URL = "$BASE_URL/authorize?client_id=$SPOTIFY_CLIENT_ID&response_type=$CODE&scope=$SCOPE&redirect_uri=$REDIRECT_URL"
+const val AUTH_URL = "$BASE_URL/authorize?${ID_QUERY_PARAM}=$SPOTIFY_CLIENT_ID&$TYPE_QUERY_PARAM=$CODE&$SCOPE_QUERY_PARAM=$SCOPE&$REDIRECT_QUERY_PARAM=$REDIRECT_URL"
+const val POST_URL = "${BASE_URL}/api/token"
