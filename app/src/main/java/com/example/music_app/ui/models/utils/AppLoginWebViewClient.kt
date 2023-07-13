@@ -38,9 +38,9 @@ class AppLoginWebViewClient : WebViewClient() {
     private fun parseResponse(url: String?) {
         val uri = Uri.parse(url)
         with(uri) {
-            val state = uri.getQueryParameter(STATE_QUERY_PARAM)
-            val error = uri.getQueryParameter(ERROR_QUERY_PARAM)
-            val code = uri.getQueryParameter(CODE_QUERY_PARAM)
+            val state = getQueryParameter(STATE_QUERY_PARAM)
+            val error = getQueryParameter(ERROR_QUERY_PARAM)
+            val code = getQueryParameter(CODE_QUERY_PARAM)
             if (code != null && error == null) {
                 val url = URL(POST_URL)
                 val postData =
