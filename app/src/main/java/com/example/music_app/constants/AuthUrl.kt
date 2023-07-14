@@ -8,8 +8,6 @@ const val SCOPE = "user-read-private user-read-email"
 const val REDIRECT_URL = "http://localhost:3000"
 const val GRANT_TYPE = "authorization_code"
 
-const val ERROR_QUERY_PARAM = "error"
-const val CODE_QUERY_PARAM = "code"
 const val SCOPE_QUERY_PARAM = "scope"
 const val REDIRECT_QUERY_PARAM = "redirect_uri"
 const val TYPE_QUERY_PARAM = "response_type"
