@@ -6,11 +6,10 @@ import com.example.music_app.constants.GRANT_TYPE
 import com.example.music_app.constants.REDIRECT_URL
 import com.example.music_app.constants.SPOTIFY_CLIENT_ID
 import com.example.music_app.constants.SPOTIFY_CLIENT_SECRET
-import com.example.music_app.ui.helpers.RetrofitAuthHelper
+import com.example.music_app.network.AuthService
 import com.google.accompanist.web.AccompanistWebViewClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.IOException
 import java.util.Base64
 
 
@@ -37,15 +36,10 @@ class AppLoginWebViewClient : AccompanistWebViewClient() {
                 val auth = "$AUTH_PROPERTY " + Base64.getEncoder()
                     .encodeToString("$SPOTIFY_CLIENT_ID:$SPOTIFY_CLIENT_SECRET".toByteArray())
                 val spotifyAPI =
-                    RetrofitAuthHelper.getInstance().create(RetrofitAuthService::class.java)
+                    AuthService.getInstance()
                 val headers = mapOf(AUTH_HEADER_NAME to auth, TYPE_HEADER_NAME to TYPE_HEADER)
                 GlobalScope.launch {
-                    try {
-                        val result =
-                            spotifyAPI.getToken(headers, GRANT_TYPE, code, REDIRECT_URL).execute()
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
+                    spotifyAPI.getToken(headers, GRANT_TYPE, code, REDIRECT_URL).execute()
                 }
             }
         }

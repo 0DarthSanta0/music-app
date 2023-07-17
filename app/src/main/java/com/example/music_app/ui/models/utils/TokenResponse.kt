@@ -1,9 +1,16 @@
 package com.example.music_app.ui.models.utils
 
+import com.google.gson.annotations.SerializedName
+
 data class TokenResponse (
-    val access_token: String? = null,
-    val token_type: String? = null,
-    val scope: String? = null,
-    val expires_in: Int? = null,
-    val refresh_token: String? = null
+    @SerializedName("access_token")
+    val accessToken: String?,
+    @SerializedName("token_type")
+    val tokenType: String?,
+    @SerializedName("scope")
+    val scope: String?,
+    @SerializedName("expires_in")
+    val expiresIn: Int?,
+    @SerializedName("refresh_token")
+    val refreshToken: String?
 )
