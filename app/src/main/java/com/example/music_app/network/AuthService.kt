@@ -1,8 +1,7 @@
 package com.example.music_app.network
 
 import com.example.music_app.constants.BASE_URL
-import com.example.music_app.ui.models.utils.TokenResponse
-import retrofit2.Call
+import com.example.music_app.models.TokenResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Field
@@ -15,12 +14,12 @@ private const val POST_URL = "api/token"
 interface AuthService {
     @FormUrlEncoded
     @POST(POST_URL)
-    fun getToken(
+    suspend fun getToken(
         @HeaderMap headers: Map<String, String>,
         @Field("grant_type") grantType: String,
         @Field("code") code: String,
         @Field("redirect_uri") redirectUri: String
-    ): Call<TokenResponse>
+    ): TokenResponse
 
     companion object AuthHelper {
         private const val SPOTIFY_URL = BASE_URL
@@ -32,5 +31,6 @@ interface AuthService {
                 .build()
                 .create(AuthService::class.java)
         }
+
     }
 }
