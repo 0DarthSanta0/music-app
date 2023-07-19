@@ -10,7 +10,9 @@ const val ERROR_QUERY_PARAM = "error"
 const val CODE_QUERY_PARAM = "code"
 
 
-class AppLoginWebViewClient(private val onRequest: (String?, String?) -> Unit) : AccompanistWebViewClient() {
+class AppLoginWebViewClient(
+    private val onRequest: (String?, String?) -> Unit
+) : AccompanistWebViewClient() {
     override fun onPageFinished(view: WebView, url: String?) {
         super.onPageFinished(view, url)
         parseResponse(url)

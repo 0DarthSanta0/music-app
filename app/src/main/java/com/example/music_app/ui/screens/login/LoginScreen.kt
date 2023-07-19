@@ -11,10 +11,9 @@ import com.google.accompanist.web.rememberWebViewState
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 
-
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel()
+    viewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
 ) {
     val state = rememberWebViewState(AUTH_URL)
     WebView(
@@ -27,8 +26,8 @@ fun LoginScreen(
         client = remember {
             AppLoginWebViewClient { code: String?, error: String? ->
                 viewModel.requestToken(
-                    code,
-                    error
+                    code = code,
+                    error = error
                 )
             }
         }
