@@ -1,4 +1,4 @@
-package com.example.music_app.models
+package com.example.music_app.data.models
 
 import com.google.gson.annotations.SerializedName
 

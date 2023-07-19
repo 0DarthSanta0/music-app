@@ -1,7 +1,7 @@
 package com.example.music_app.network
 
 import com.example.music_app.constants.BASE_URL
-import com.example.music_app.models.TokenResponse
+import com.example.music_app.data.models.TokenResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Field

@@ -1,4 +1,4 @@
-package com.example.music_app.ui.utils
+package com.example.music_app.ui.login
 
 import android.net.Uri
 import android.webkit.WebView

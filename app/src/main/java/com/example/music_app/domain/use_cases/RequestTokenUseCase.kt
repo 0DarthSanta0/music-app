@@ -1,6 +1,6 @@
-package com.example.music_app.domain
+package com.example.music_app.domain.use_cases
 
-import com.example.music_app.data.models.LoginRepository
+import com.example.music_app.domain.repositories.LoginRepository
 
 class RequestTokenUseCase(
     private val loginRepository: LoginRepository

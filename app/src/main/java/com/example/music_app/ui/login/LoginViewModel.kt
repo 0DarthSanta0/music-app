@@ -1,4 +1,4 @@
-package com.example.music_app.ui.view_models
+package com.example.music_app.ui.login
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.music_app.data.LoginRepositoryImpl
-import com.example.music_app.domain.RequestTokenUseCase
+import com.example.music_app.domain.use_cases.RequestTokenUseCase
 import kotlinx.coroutines.launch
 
 class LoginViewModel(

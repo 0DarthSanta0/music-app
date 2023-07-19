@@ -1,7 +1,7 @@
-package com.example.music_app.data.models
+package com.example.music_app.domain.repositories
 
-import com.example.music_app.models.TokenResponse
-import com.example.music_app.network.ResponseError
+import com.example.music_app.data.models.ResponseError
+import com.example.music_app.data.models.TokenResponse
 import com.github.michaelbull.result.Result
 import kotlinx.coroutines.flow.Flow
 
