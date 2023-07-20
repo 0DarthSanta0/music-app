@@ -1,12 +1,12 @@
-package com.example.music_app.data
+package com.example.music_app.data.repositories
 
 import com.example.music_app.constants.GRANT_TYPE
 import com.example.music_app.constants.REDIRECT_URL
 import com.example.music_app.constants.SPOTIFY_CLIENT_ID
 import com.example.music_app.constants.SPOTIFY_CLIENT_SECRET
+import com.example.music_app.data.models.ResponseError
 import com.example.music_app.domain.repositories.LoginRepository
 import com.example.music_app.network.AuthService
-import com.example.music_app.data.models.ResponseError
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import kotlinx.coroutines.Dispatchers
@@ -24,11 +24,7 @@ class LoginRepositoryImpl: LoginRepository {
 
     override suspend fun requestToken(code: String) = flow {
         val token = spotifyAPI.getToken(createHeaders(), GRANT_TYPE, code, REDIRECT_URL)
-        if (token.accessToken != null) {
-            emit(Ok(token))
-        } else {
-            emit(Err(ResponseError()))
-        }
+        emit(if (token.accessToken != null) Ok(token) else Err(ResponseError()))
     }.flowOn(Dispatchers.IO)
 
     private fun createHeaders(): Map<String, String> {
