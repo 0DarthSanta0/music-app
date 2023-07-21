@@ -4,15 +4,17 @@ import android.app.Application
 import android.content.Context
 
 class MusicAppApplication: Application()  {
-    init {
+
+    override fun onCreate() {
         instance = this
+        super.onCreate()
     }
 
     companion object {
         private var instance: MusicAppApplication? = null
 
-        fun applicationContext() : Context {
-            return instance!!.applicationContext
+        fun applicationContext() : Context? {
+            return instance?.applicationContext
         }
     }
 

@@ -10,23 +10,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 
-private const val KEY = "access_token"
-private const val NAME = "AccessToken"
+private const val NAME = "LoginStore"
 
 
-class LoginStore(private val context: Context) {
+class LoginStore(private val context: Context?) {
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(NAME)
-        private val ACCESS_TOKEN_KEY: Preferences.Key<String> = stringPreferencesKey(KEY)
     }
 
-    val getAccessToken: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[ACCESS_TOKEN_KEY] ?: ""
+    fun getString(key: String): Flow<String>? = context?.dataStore?.data?.map { preferences ->
+        preferences[stringPreferencesKey(key)] ?: ""
     }
 
-    suspend fun saveToken(token: String) {
-        context.dataStore.edit { preferences ->
-            preferences[ACCESS_TOKEN_KEY] = token
+    suspend fun saveString(token: String, key: String) {
+        context?.dataStore?.edit { preferences ->
+            preferences[stringPreferencesKey(key)] = token
         }
     }
 }
