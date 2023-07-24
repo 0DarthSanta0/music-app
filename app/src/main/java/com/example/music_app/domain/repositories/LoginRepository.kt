@@ -10,5 +10,5 @@ interface LoginRepository {
 
     suspend fun saveToken(token: String)
 
-    fun isAuthorized(): Boolean
+    fun isAuthorized(): Flow<Boolean>
 }

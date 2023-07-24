@@ -7,9 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.music_app.MusicAppApplication
-import com.example.music_app.data.LoginStore
-import com.example.music_app.data.LoginStoreManager
+import com.example.music_app.data.data_store.DataStoreManagerManagerImpl
 import com.example.music_app.data.repositories.LoginRepositoryImpl
 import com.example.music_app.domain.use_cases.IsAuthorizedCheckUseCase
 import com.example.music_app.domain.use_cases.RequestTokenUseCase
@@ -34,7 +32,7 @@ class LoginViewModel(
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
-            val loginRepository = LoginRepositoryImpl(LoginStoreManager(LoginStore(context = MusicAppApplication.applicationContext())))
+            val loginRepository = LoginRepositoryImpl(DataStoreManagerManagerImpl)
             initializer {
                 LoginViewModel(
                     requestTokenUseCase = RequestTokenUseCase(loginRepository = loginRepository),

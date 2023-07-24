@@ -11,11 +11,9 @@ class MusicAppApplication: Application()  {
     }
 
     companion object {
-        private var instance: MusicAppApplication? = null
+        private lateinit var instance: MusicAppApplication
 
-        fun applicationContext() : Context? {
-            return instance?.applicationContext
-        }
+        fun applicationContext() : Context = instance.applicationContext
     }
 
 }
