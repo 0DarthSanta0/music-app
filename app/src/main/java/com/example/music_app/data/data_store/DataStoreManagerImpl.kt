@@ -16,7 +16,7 @@ private const val NAME = "LoginStore"
 
 
 @SuppressLint("StaticFieldLeak")
-object DataStoreManagerManagerImpl: DataStoreManager {
+object DataStoreManagerImpl: DataStoreManager {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(NAME)
 
