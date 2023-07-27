@@ -21,6 +21,14 @@ interface AuthService {
         @Field("redirect_uri") redirectUri: String
     ): TokenResponse
 
+    @FormUrlEncoded
+    @POST(POST_URL)
+    suspend fun getRefreshToken(
+        @HeaderMap headers: Map<String, String>,
+        @Field("grant_type") grantType: String,
+        @Field("refresh_token") refreshToken: String
+    ): TokenResponse
+
     companion object AuthHelper {
         private const val SPOTIFY_URL = BASE_URL
 
