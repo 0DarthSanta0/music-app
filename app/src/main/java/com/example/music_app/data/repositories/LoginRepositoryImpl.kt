@@ -1,11 +1,11 @@
 package com.example.music_app.data.repositories
 
-import com.example.music_app.constants.GRANT_TYPE
 import com.example.music_app.constants.REDIRECT_URL
 import com.example.music_app.constants.SPOTIFY_CLIENT_ID
 import com.example.music_app.constants.SPOTIFY_CLIENT_SECRET
 import com.example.music_app.data.data_store.DataStoreManager
 import com.example.music_app.data.models.ResponseError
+import com.example.music_app.data.models.TokenRefreshResponse
 import com.example.music_app.data.models.TokenResponse
 import com.example.music_app.domain.repositories.LoginRepository
 import com.example.music_app.network.AuthService
@@ -30,34 +30,29 @@ private const val TOKEN_KEY = "access_token"
 private const val TIME_KEY = "token_receiving_time"
 private const val REFRESH_TOKEN_KEY = "refresh_token"
 
+const val AUTH_GRANT_TYPE = "authorization_code"
+const val REFRESH_GRANT_TYPE = "refresh_token"
+
 
 class LoginRepositoryImpl(
-    private val dataStoreManager: DataStoreManager
+    private val dataStoreManager: DataStoreManager,
+    private val spotifyAPI: AuthService = AuthService.getInstance()
 ): LoginRepository {
-    private val spotifyAPI = AuthService.getInstance()
 
     override suspend fun requestToken(code: String) = flow {
-        val token = spotifyAPI.getToken(createHeaders(), GRANT_TYPE, code, REDIRECT_URL)
+        val token = spotifyAPI.getToken(createHeaders(), AUTH_GRANT_TYPE, code, REDIRECT_URL)
         emit(if (token.accessToken != null) {
             saveToken(token)
             Ok(token)
         } else Err(ResponseError()))
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun saveToken(token: TokenResponse) {
-        with(dataStoreManager) {
-            saveString(token.accessToken.toString(), TOKEN_KEY)
-            saveString(Instant.now().toString(), TIME_KEY)
-            saveString(token.refreshToken.toString(), REFRESH_TOKEN_KEY)
-        }
-    }
-
-    override suspend fun requestRefreshToken(): Flow<Result<TokenResponse, ResponseError>> =
+    override suspend fun requestRefreshToken(): Flow<Result<TokenRefreshResponse, ResponseError>> =
         dataStoreManager.getString(REFRESH_TOKEN_KEY).transform { refreshToken ->
-            val token = spotifyAPI.getRefreshToken(createHeaders(), "refresh_token", refreshToken)
+            val token = spotifyAPI.getRefreshToken(createHeaders(), REFRESH_GRANT_TYPE, refreshToken)
             emit(
                 if (token.accessToken != null) {
-                    saveToken(token)
+                    saveRefreshToken(token)
                     Ok(token)
                 } else Err(ResponseError())
             )
@@ -69,8 +64,23 @@ class LoginRepositoryImpl(
         dataStoreManager.getString(TIME_KEY).transform { receivingTime ->
             val recTime = Instant.parse(receivingTime)
             val curTime = Instant.now()
-            if (curTime.minusSeconds(recTime.epochSecond).epochSecond >= 3600) emit(true) else emit(false)
+            if (curTime.minusSeconds(recTime.epochSecond).epochSecond >= 1) emit(true) else emit(false)
         }
+
+    private suspend fun saveToken(token: TokenResponse) {
+        saveBaseToken(token.accessToken.toString(), Instant.now().toString())
+        dataStoreManager.saveString(token.refreshToken.toString(), REFRESH_TOKEN_KEY)
+    }
+
+    private suspend fun saveRefreshToken(token: TokenRefreshResponse) =
+        saveBaseToken(token.accessToken.toString(), Instant.now().toString())
+
+    private suspend fun saveBaseToken(accessToken: String, time: String) {
+        with(dataStoreManager) {
+            saveString(accessToken, TOKEN_KEY)
+            saveString(time, TIME_KEY)
+        }
+    }
 
     private fun createHeaders(): Map<String, String> {
         val auth = "$AUTH_PROPERTY " + Base64.getEncoder()

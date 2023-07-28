@@ -6,7 +6,6 @@ const val SPOTIFY_CLIENT_SECRET = "6a0137ad789a404db79c6e4d6625bf49"
 const val CODE = "code"
 const val SCOPE = "user-read-private user-read-email"
 const val REDIRECT_URL = "http://localhost:3000"
-const val GRANT_TYPE = "authorization_code"
 
 const val SCOPE_QUERY_PARAM = "scope"
 const val REDIRECT_QUERY_PARAM = "redirect_uri"
