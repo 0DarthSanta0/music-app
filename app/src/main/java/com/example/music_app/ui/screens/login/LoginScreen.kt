@@ -12,13 +12,12 @@ import com.example.music_app.constants.AUTH_URL
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewState
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.music_app.ui.navigation.Screens
 
 
 @Composable
 fun LoginScreen(
-    navController: NavController,
+    onNavigate: (screen: Screens) -> Unit,
     viewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
 ) {
     val state = rememberWebViewState(AUTH_URL)
@@ -45,7 +44,7 @@ fun LoginScreen(
     LaunchedEffect(screen) {
         if (screen != null) {
             val castedScreen = screen as Screens
-            navController.navigate(castedScreen.route)
+            onNavigate(castedScreen)
         }
     }
 

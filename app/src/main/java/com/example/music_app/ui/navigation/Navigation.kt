@@ -5,22 +5,23 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.music_app.ui.screens.login.LoginScreen
-import com.example.music_app.ui.screens.main.MainScreen
 import com.example.music_app.ui.screens.playlists.PlaylistsScreen
 
 
 @Composable
-fun Navigation() {
+fun Navigation(startScreen: Screens?) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screens.MainScreen.route ) {
-        composable(route = Screens.MainScreen.route) {
-            MainScreen(navController = navController)
-        }
+    NavHost(
+        navController = navController,
+        startDestination = startScreen?.route ?: Screens.LoginScreen.route
+    ) {
         composable(route = Screens.LoginScreen.route) {
-            LoginScreen(navController = navController)
+            LoginScreen(onNavigate = {
+                navController.navigate(it.route)
+            })
         }
         composable(route = Screens.PlaylistsScreen.route) {
-            PlaylistsScreen(navController = navController)
+            PlaylistsScreen()
         }
     }
 }
