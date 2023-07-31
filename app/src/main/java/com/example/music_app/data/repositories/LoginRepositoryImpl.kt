@@ -38,7 +38,8 @@ class LoginRepositoryImpl(
 
     override suspend fun saveToken(token: String) = dataStoreManager.saveString(token, KEY)
 
-    override fun isAuthorized(): Flow<Boolean> = dataStoreManager.getString(KEY).map(String::isNotEmpty)
+    override fun isAuthorized(): Flow<Boolean> =
+        dataStoreManager.getString(KEY).map(String::isNotEmpty)
 
     private fun createHeaders(): Map<String, String> {
         val auth = "$AUTH_PROPERTY " + Base64.getEncoder()

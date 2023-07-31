@@ -20,7 +20,8 @@ class LoginViewModel(
             viewModelScope.launch {
                 requestTokenUseCase(code)
                     .collect { token ->
-                        if (token.component1() != null) onLoginSuccess(Screens.PlaylistsScreen) else onLoginSuccess(Screens.LoginScreen)
+                        if (token.component1() != null) onLoginSuccess(Screens.PlaylistsScreen)
+                        else onLoginSuccess(Screens.LoginScreen)
                     }
             }
         }
