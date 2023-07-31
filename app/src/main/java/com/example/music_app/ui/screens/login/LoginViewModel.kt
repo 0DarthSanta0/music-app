@@ -1,7 +1,6 @@
-package com.example.music_app.ui.login
+package com.example.music_app.ui.screens.login
 
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -9,21 +8,18 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.repositories.LoginRepositoryImpl
-import com.example.music_app.domain.use_cases.IsAuthorizedCheckUseCase
 import com.example.music_app.domain.use_cases.RequestTokenUseCase
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
-    private val requestTokenUseCase: RequestTokenUseCase,
-    private val isAuthorizedCheckUseCase: IsAuthorizedCheckUseCase
+    private val requestTokenUseCase: RequestTokenUseCase
 ) : ViewModel() {
-
-    fun requestToken(code: String?, error: String?) {
+    fun requestToken(code: String?, error: String?, onLoginSuccess: () -> Unit) {
         if (code != null) {
             viewModelScope.launch {
                 requestTokenUseCase(code)
                     .collect { token ->
-                        Log.d("token", token.component1().toString())
+                        if (token.component1() != null) onLoginSuccess()
                     }
             }
         }
@@ -35,8 +31,7 @@ class LoginViewModel(
             val loginRepository = LoginRepositoryImpl(DataStoreManagerImpl)
             initializer {
                 LoginViewModel(
-                    requestTokenUseCase = RequestTokenUseCase(loginRepository = loginRepository),
-                    isAuthorizedCheckUseCase = IsAuthorizedCheckUseCase(loginRepository = loginRepository)
+                    requestTokenUseCase = RequestTokenUseCase(loginRepository = loginRepository)
                 )
             }
         }
