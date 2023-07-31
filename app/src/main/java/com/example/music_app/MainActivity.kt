@@ -15,13 +15,13 @@ import com.example.music_app.ui.navigation.Navigation
 import com.example.music_app.ui.theme.MusicappTheme
 
 
-class MainActivity: ComponentActivity() {
-    private val viewModel: MainActivityViewModel by viewModels {MainActivityViewModelFactory()}
+class MainActivity : ComponentActivity() {
+    private val viewModel: MainActivityViewModel by viewModels { MainActivityViewModelFactory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.setKeepOnScreenCondition{viewModel.isSplashScreenVisible.value}
+        splashScreen.setKeepOnScreenCondition { viewModel.isSplashScreenVisible.value }
         setContent {
             val screen by viewModel.route.collectAsState()
             MusicappTheme {
