@@ -16,8 +16,8 @@ import com.example.music_app.ui.theme.MusicappTheme
 
 
 class MainActivity: ComponentActivity() {
-    private val viewModelFactory: MainActivityViewModelFactory = MainActivityViewModelFactory()
-    private val viewModel: MainActivityViewModel by viewModels {viewModelFactory}
+    private val viewModel: MainActivityViewModel by viewModels {MainActivityViewModelFactory()}
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)

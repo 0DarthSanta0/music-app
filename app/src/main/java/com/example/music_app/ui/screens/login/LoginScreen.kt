@@ -10,13 +10,12 @@ import com.example.music_app.constants.AUTH_URL
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewState
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.music_app.ui.navigation.Screens
 
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun LoginScreen(
-    onLoginSuccess: (screen: Screens) -> Unit,
+    onLoginSuccess: () -> Unit,
     viewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
 ) {
     val state = rememberWebViewState(AUTH_URL)

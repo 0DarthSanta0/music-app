@@ -9,19 +9,17 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.repositories.LoginRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestTokenUseCase
-import com.example.music_app.ui.navigation.Screens
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
     private val requestTokenUseCase: RequestTokenUseCase
 ) : ViewModel() {
-    fun requestToken(code: String?, error: String?, onLoginSuccess: (screen: Screens) -> Unit) {
+    fun requestToken(code: String?, error: String?, onLoginSuccess: () -> Unit) {
         if (code != null) {
             viewModelScope.launch {
                 requestTokenUseCase(code)
                     .collect { token ->
-                        if (token.component1() != null) onLoginSuccess(Screens.PlaylistsScreen)
-                        else onLoginSuccess(Screens.LoginScreen)
+                        if (token.component1() != null) onLoginSuccess()
                     }
             }
         }
