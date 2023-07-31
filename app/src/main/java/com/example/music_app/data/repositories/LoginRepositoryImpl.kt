@@ -16,8 +16,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.transform
 import java.time.Instant
 import java.util.Base64
 
@@ -30,26 +28,31 @@ private const val TOKEN_KEY = "access_token"
 private const val TIME_KEY = "token_receiving_time"
 private const val REFRESH_TOKEN_KEY = "refresh_token"
 
-const val AUTH_GRANT_TYPE = "authorization_code"
-const val REFRESH_GRANT_TYPE = "refresh_token"
+private const val AUTH_GRANT_TYPE = "authorization_code"
+private const val REFRESH_GRANT_TYPE = "refresh_token"
 
+private const val TOKEN_LIFETIME = 3600
 
 class LoginRepositoryImpl(
     private val dataStoreManager: DataStoreManager,
     private val spotifyAPI: AuthService = AuthService.getInstance()
-): LoginRepository {
+) : LoginRepository {
 
     override suspend fun requestToken(code: String) = flow {
         val token = spotifyAPI.getToken(createHeaders(), AUTH_GRANT_TYPE, code, REDIRECT_URL)
-        emit(if (token.accessToken != null) {
-            saveToken(token)
-            Ok(token)
-        } else Err(ResponseError()))
+        emit(
+            if (token.accessToken != null) {
+                saveToken(token)
+                Ok(token)
+            } else Err(ResponseError())
+        )
     }.flowOn(Dispatchers.IO)
 
     override suspend fun requestRefreshToken(): Flow<Result<TokenRefreshResponse, ResponseError>> =
-        dataStoreManager.getString(REFRESH_TOKEN_KEY).transform { refreshToken ->
-            val token = spotifyAPI.getRefreshToken(createHeaders(), REFRESH_GRANT_TYPE, refreshToken)
+        flow {
+            val refreshToken = dataStoreManager.getString(REFRESH_TOKEN_KEY)
+            val token =
+                spotifyAPI.getRefreshToken(createHeaders(), REFRESH_GRANT_TYPE, refreshToken)
             emit(
                 if (token.accessToken != null) {
                     saveRefreshToken(token)
@@ -58,15 +61,14 @@ class LoginRepositoryImpl(
             )
         }
 
-    override fun isAuthorized(): Flow<Boolean> =
-        dataStoreManager.getString(TOKEN_KEY).map(String::isNotEmpty)
+    override suspend fun isAuthorized(): Boolean =
+        dataStoreManager.getString(TOKEN_KEY).isNotEmpty()
 
-    override fun isOutdated(): Flow<Boolean> =
-        dataStoreManager.getString(TIME_KEY).transform { receivingTime ->
-            val recTime = Instant.parse(receivingTime)
-            val curTime = Instant.now()
-            if (curTime.minusSeconds(recTime.epochSecond).epochSecond >= 1) emit(true) else emit(false)
-        }
+    override suspend fun isOutdated(): Boolean {
+        val recTime = Instant.parse(dataStoreManager.getString(TIME_KEY))
+        val currentTime = Instant.now()
+        return currentTime.minusSeconds(recTime.epochSecond).epochSecond >= TOKEN_LIFETIME
+    }
 
     private suspend fun saveToken(token: TokenResponse) {
         saveBaseToken(token.accessToken.toString(), Instant.now().toString())
@@ -88,5 +90,4 @@ class LoginRepositoryImpl(
             .encodeToString("$SPOTIFY_CLIENT_ID:$SPOTIFY_CLIENT_SECRET".toByteArray())
         return mapOf(AUTH_HEADER_NAME to auth, TYPE_HEADER_NAME to TYPE_HEADER)
     }
-
 }
