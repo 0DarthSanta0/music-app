@@ -58,7 +58,8 @@ class LoginRepositoryImpl(
             )
         }
 
-    override fun isAuthorized(): Flow<Boolean> = dataStoreManager.getString(TOKEN_KEY).map(String::isNotEmpty)
+    override fun isAuthorized(): Flow<Boolean> =
+        dataStoreManager.getString(TOKEN_KEY).map(String::isNotEmpty)
 
     override fun isOutdated(): Flow<Boolean> =
         dataStoreManager.getString(TIME_KEY).transform { receivingTime ->
