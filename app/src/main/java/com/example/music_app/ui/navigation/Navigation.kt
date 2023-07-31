@@ -16,7 +16,7 @@ fun Navigation(startScreen: Screens?) {
         startDestination = startScreen?.route ?: Screens.LoginScreen.route
     ) {
         composable(route = Screens.LoginScreen.route) {
-            LoginScreen(onNavigate = {
+            LoginScreen(onLoginSuccess = {
                 navController.navigate(it.route)
             })
         }
