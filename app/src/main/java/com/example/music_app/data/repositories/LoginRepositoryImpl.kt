@@ -83,12 +83,12 @@ class LoginRepositoryImpl(
 
     override suspend fun isOutdated(): Result<Boolean, AppErrors> =
         catchErrors {
-            val recTimeString: String = dataStoreManager.getString(TIME_KEY)
-            if (recTimeString.isEmpty()) Err(AppErrors.RecTime)
+            val recTimeString = dataStoreManager.getString(TIME_KEY)
+            if (recTimeString.isEmpty()) return Err(AppErrors.RecTime)
             val recTime = Instant.parse(dataStoreManager.getString(TIME_KEY))
             val currentTime = Instant.now()
-            if (currentTime.epochSecond < recTime.epochSecond) Err(AppErrors.WrongTimeInterval)
-            currentTime.minusSeconds(recTime.epochSecond).epochSecond >= TOKEN_LIFETIME
+            if (currentTime.epochSecond < recTime.epochSecond) return Err(AppErrors.WrongTimeInterval)
+            return Ok(currentTime.minusSeconds(recTime.epochSecond).epochSecond >= TOKEN_LIFETIME)
         }
 
 
