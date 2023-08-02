@@ -31,14 +31,19 @@ class MainActivityViewModel(
 
     private fun checkStatus() {
         viewModelScope.launch {
-            if (isAuthorizedCheckUseCase()) {
-                if (isOutdatedCheckUseCase()) {
+            val isAuth: Boolean = isAuthorizedCheckUseCase().component1()?: false
+            when {
+                !isAuth -> _route.value = Screens.LoginScreen
+                isOutdatedCheckUseCase().component1()?: false -> {
                     requestRefreshTokenUseCase().collect { token ->
-                        if (token.component1() != null) _route.value =
-                            Screens.PlaylistsScreen
+                        if (token.component1() != null) {
+                            _route.value =
+                                Screens.PlaylistsScreen
+                        }
                     }
-                } else _route.value = Screens.PlaylistsScreen
-            } else _route.value = Screens.LoginScreen
+                }
+                else -> _route.value = Screens.PlaylistsScreen
+            }
             delay(WAIT_TIME)
             _isSplashScreenVisible.value = false
         }

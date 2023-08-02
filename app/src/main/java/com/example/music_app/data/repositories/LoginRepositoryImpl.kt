@@ -4,6 +4,7 @@ import com.example.music_app.constants.REDIRECT_URL
 import com.example.music_app.constants.SPOTIFY_CLIENT_ID
 import com.example.music_app.constants.SPOTIFY_CLIENT_SECRET
 import com.example.music_app.data.data_store.DataStoreManager
+import com.example.music_app.data.models.AppErrors
 import com.example.music_app.data.models.ResponseError
 import com.example.music_app.data.models.TokenRefreshResponse
 import com.example.music_app.data.models.TokenResponse
@@ -12,6 +13,7 @@ import com.example.music_app.network.AuthService
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.runCatching
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -39,7 +41,12 @@ class LoginRepositoryImpl(
 ) : LoginRepository {
 
     override suspend fun requestToken(code: String) = flow {
-        val token = spotifyAPI.getToken(createHeaders(), AUTH_GRANT_TYPE, code, REDIRECT_URL)
+        val token = spotifyAPI.getToken(
+            headers = createHeaders(),
+            grantType = AUTH_GRANT_TYPE,
+            code = code,
+            redirectUri = REDIRECT_URL
+        )
         emit(
             if (token.accessToken != null) {
                 saveToken(token)
@@ -52,7 +59,11 @@ class LoginRepositoryImpl(
         flow {
             val refreshToken = dataStoreManager.getString(REFRESH_TOKEN_KEY)
             val token =
-                spotifyAPI.getRefreshToken(createHeaders(), REFRESH_GRANT_TYPE, refreshToken)
+                spotifyAPI.getRefreshToken(
+                    headers = createHeaders(),
+                    grantType = REFRESH_GRANT_TYPE,
+                    refreshToken = refreshToken
+                )
             emit(
                 if (token.accessToken != null) {
                     saveRefreshToken(token)
@@ -61,28 +72,44 @@ class LoginRepositoryImpl(
             )
         }
 
-    override suspend fun isAuthorized(): Boolean =
-        dataStoreManager.getString(TOKEN_KEY).isNotEmpty()
+    override suspend fun isAuthorized(): Result<Boolean, Throwable> =
+        runCatching {
+            dataStoreManager.getString(TOKEN_KEY).isNotEmpty()
+        }
 
-    override suspend fun isOutdated(): Boolean {
-        val recTime = Instant.parse(dataStoreManager.getString(TIME_KEY))
-        val currentTime = Instant.now()
-        return currentTime.minusSeconds(recTime.epochSecond).epochSecond >= TOKEN_LIFETIME
-    }
+
+    override suspend fun isOutdated(): Result<Boolean, Throwable> =
+        runCatching {
+            val recTimeString: String = dataStoreManager.getString(TIME_KEY)
+            if (recTimeString == "") throw Exception(AppErrors.RecTime.error)
+            val recTime = Instant.parse(dataStoreManager.getString(TIME_KEY))
+            val currentTime = Instant.now()
+            if (currentTime.epochSecond < recTime.epochSecond) throw Exception(AppErrors.WrongTimeInterval.error)
+            currentTime.minusSeconds(recTime.epochSecond).epochSecond >= TOKEN_LIFETIME
+        }
+
 
     private suspend fun saveToken(token: TokenResponse) {
-        saveBaseToken(token.accessToken.toString(), Instant.now().toString())
-        dataStoreManager.saveString(token.refreshToken.toString(), REFRESH_TOKEN_KEY)
+        if (token.accessToken != null) saveBaseToken(
+            accessToken = token.accessToken,
+            time = Instant.now().toString()
+        )
+        if (token.refreshToken != null) dataStoreManager.saveString(
+            string = token.refreshToken,
+            key = REFRESH_TOKEN_KEY
+        )
     }
 
-    private suspend fun saveRefreshToken(token: TokenRefreshResponse) =
-        saveBaseToken(token.accessToken.toString(), Instant.now().toString())
+    private suspend fun saveRefreshToken(token: TokenRefreshResponse) {
+        if (token.accessToken != null) saveBaseToken(
+            accessToken = token.accessToken,
+            time = Instant.now().toString()
+        )
+    }
 
-    private suspend fun saveBaseToken(accessToken: String, time: String) {
-        with(dataStoreManager) {
-            saveString(accessToken, TOKEN_KEY)
-            saveString(time, TIME_KEY)
-        }
+    private suspend fun saveBaseToken(accessToken: String, time: String) = with(dataStoreManager) {
+        saveString(string = accessToken, key = TOKEN_KEY)
+        saveString(string = time, key = TIME_KEY)
     }
 
     private fun createHeaders(): Map<String, String> {

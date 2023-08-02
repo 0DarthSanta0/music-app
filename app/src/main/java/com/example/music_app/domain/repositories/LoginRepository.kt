@@ -9,6 +9,6 @@ import kotlinx.coroutines.flow.Flow
 interface LoginRepository {
     suspend fun requestToken(code: String): Flow<Result<TokenResponse, ResponseError>>
     suspend fun requestRefreshToken(): Flow<Result<TokenRefreshResponse, ResponseError>>
-    suspend fun isAuthorized(): Boolean
-    suspend fun isOutdated(): Boolean
+    suspend fun isAuthorized(): Result<Boolean, Throwable>
+    suspend fun isOutdated(): Result<Boolean, Throwable>
 }
