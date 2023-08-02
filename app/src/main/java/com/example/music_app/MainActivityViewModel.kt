@@ -6,6 +6,7 @@ import com.example.music_app.domain.use_cases.IsAuthorizedCheckUseCase
 import com.example.music_app.domain.use_cases.IsOutdatedCheckUseCase
 import com.example.music_app.domain.use_cases.RequestRefreshTokenUseCase
 import com.example.music_app.ui.navigation.Screens
+import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,18 +32,19 @@ class MainActivityViewModel(
 
     private fun checkStatus() {
         viewModelScope.launch {
-            val isAuth: Boolean = isAuthorizedCheckUseCase().component1()?: false
-            when {
-                !isAuth -> _route.value = Screens.LoginScreen
-                isOutdatedCheckUseCase().component1()?: false -> {
-                    requestRefreshTokenUseCase().collect { token ->
-                        if (token.component1() != null) {
-                            _route.value =
-                                Screens.PlaylistsScreen
+            isAuthorizedCheckUseCase().onSuccess { isAuth ->
+                when {
+                    !isAuth -> _route.value = Screens.LoginScreen
+                    isOutdatedCheckUseCase().component1()?: false -> {
+                        requestRefreshTokenUseCase().collect { token ->
+                            if (token.component1() != null) {
+                                _route.value =
+                                    Screens.PlaylistsScreen
+                            }
                         }
                     }
+                    else -> _route.value = Screens.PlaylistsScreen
                 }
-                else -> _route.value = Screens.PlaylistsScreen
             }
             delay(WAIT_TIME)
             _isSplashScreenVisible.value = false

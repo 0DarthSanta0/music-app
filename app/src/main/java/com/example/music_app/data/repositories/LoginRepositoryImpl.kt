@@ -13,7 +13,6 @@ import com.example.music_app.network.AuthService
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.github.michaelbull.result.runCatching
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -51,7 +50,9 @@ class LoginRepositoryImpl(
             if (token.accessToken != null) {
                 saveToken(token)
                 Ok(token)
-            } else Err(ResponseError())
+            } else {
+                Err(ResponseError())
+            }
         )
     }.flowOn(Dispatchers.IO)
 
@@ -68,48 +69,56 @@ class LoginRepositoryImpl(
                 if (token.accessToken != null) {
                     saveRefreshToken(token)
                     Ok(token)
-                } else Err(ResponseError())
+                } else {
+                    Err(ResponseError())
+                }
             )
         }
 
-    override suspend fun isAuthorized(): Result<Boolean, Throwable> =
-        runCatching {
+    override suspend fun isAuthorized(): Result<Boolean, AppErrors> =
+        catchErrors {
             dataStoreManager.getString(TOKEN_KEY).isNotEmpty()
         }
 
 
-    override suspend fun isOutdated(): Result<Boolean, Throwable> =
-        runCatching {
+    override suspend fun isOutdated(): Result<Boolean, AppErrors> =
+        catchErrors {
             val recTimeString: String = dataStoreManager.getString(TIME_KEY)
-            if (recTimeString == "") throw Exception(AppErrors.RecTime.error)
+            if (recTimeString.isEmpty()) Err(AppErrors.RecTime)
             val recTime = Instant.parse(dataStoreManager.getString(TIME_KEY))
             val currentTime = Instant.now()
-            if (currentTime.epochSecond < recTime.epochSecond) throw Exception(AppErrors.WrongTimeInterval.error)
+            if (currentTime.epochSecond < recTime.epochSecond) Err(AppErrors.WrongTimeInterval)
             currentTime.minusSeconds(recTime.epochSecond).epochSecond >= TOKEN_LIFETIME
         }
 
 
     private suspend fun saveToken(token: TokenResponse) {
-        if (token.accessToken != null) saveBaseToken(
-            accessToken = token.accessToken,
-            time = Instant.now().toString()
-        )
-        if (token.refreshToken != null) dataStoreManager.saveString(
-            string = token.refreshToken,
-            key = REFRESH_TOKEN_KEY
-        )
+        if (token.accessToken != null) {
+            saveBaseToken(
+                accessToken = token.accessToken,
+                time = Instant.now().toString()
+            )
+        }
+        if (token.refreshToken != null) {
+            dataStoreManager.saveString(
+                value = token.refreshToken,
+                key = REFRESH_TOKEN_KEY
+            )
+        }
     }
 
     private suspend fun saveRefreshToken(token: TokenRefreshResponse) {
-        if (token.accessToken != null) saveBaseToken(
-            accessToken = token.accessToken,
-            time = Instant.now().toString()
-        )
+        if (token.accessToken != null) {
+            saveBaseToken(
+                accessToken = token.accessToken,
+                time = Instant.now().toString()
+            )
+        }
     }
 
     private suspend fun saveBaseToken(accessToken: String, time: String) = with(dataStoreManager) {
-        saveString(string = accessToken, key = TOKEN_KEY)
-        saveString(string = time, key = TIME_KEY)
+        saveString(value = accessToken, key = TOKEN_KEY)
+        saveString(value = time, key = TIME_KEY)
     }
 
     private fun createHeaders(): Map<String, String> {
