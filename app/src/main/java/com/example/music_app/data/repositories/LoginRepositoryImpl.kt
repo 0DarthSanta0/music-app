@@ -101,8 +101,8 @@ class LoginRepositoryImpl(
         }
         if (token.refreshToken != null) {
             dataStoreManager.saveString(
-                value = token.refreshToken,
-                key = REFRESH_TOKEN_KEY
+                key = REFRESH_TOKEN_KEY,
+                value = token.refreshToken
             )
         }
     }
@@ -117,8 +117,8 @@ class LoginRepositoryImpl(
     }
 
     private suspend fun saveBaseToken(accessToken: String, time: String) = with(dataStoreManager) {
-        saveString(value = accessToken, key = TOKEN_KEY)
-        saveString(value = time, key = TIME_KEY)
+        saveString(key = TOKEN_KEY, value = accessToken)
+        saveString(key = TIME_KEY, value = time)
     }
 
     private fun createHeaders(): Map<String, String> {

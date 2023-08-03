@@ -27,7 +27,7 @@ object DataStoreManagerImpl : DataStoreManager {
             preferences[stringPreferencesKey(key)] ?: ""
         }.firstOrNull() ?: ""
 
-    override suspend fun saveString(value: String, key: String) {
+    override suspend fun saveString(key: String, value: String) {
         context.dataStore.edit { preferences ->
             preferences[stringPreferencesKey(key)] = value
         }

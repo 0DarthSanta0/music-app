@@ -5,6 +5,6 @@ interface DataStoreManager {
 
     suspend fun getString(key: String): String
 
-    suspend fun saveString(value: String, key: String)
+    suspend fun saveString(key: String, value: String)
 
 }
