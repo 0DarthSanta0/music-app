@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">music-app</string>
+
+    <string name="new_playlist">Add new playlist</string>
 </resources>
