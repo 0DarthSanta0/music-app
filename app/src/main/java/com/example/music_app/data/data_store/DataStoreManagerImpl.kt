@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 
-private const val NAME = "LoginStore"
+private const val NAME = "DataStore"
 
 
 @SuppressLint("StaticFieldLeak")
