@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.music_app.MusicAppApplication
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 
@@ -16,19 +16,20 @@ private const val NAME = "LoginStore"
 
 
 @SuppressLint("StaticFieldLeak")
-object DataStoreManagerImpl: DataStoreManager {
+object DataStoreManagerImpl : DataStoreManager {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(NAME)
 
     private val context: Context = MusicAppApplication.applicationContext()
 
-    override fun getString(key: String): Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[stringPreferencesKey(key)] ?: ""
-    }
+    override suspend fun getString(key: String): String =
+        context.dataStore.data.map { preferences ->
+            preferences[stringPreferencesKey(key)] ?: ""
+        }.firstOrNull() ?: ""
 
-    override suspend fun saveString(token: String, key: String) {
+    override suspend fun saveString(key: String, value: String) {
         context.dataStore.edit { preferences ->
-            preferences[stringPreferencesKey(key)] = token
+            preferences[stringPreferencesKey(key)] = value
         }
     }
 }

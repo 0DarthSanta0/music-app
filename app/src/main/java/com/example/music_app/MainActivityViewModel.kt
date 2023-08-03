@@ -3,7 +3,10 @@ package com.example.music_app
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.music_app.domain.use_cases.IsAuthorizedCheckUseCase
+import com.example.music_app.domain.use_cases.IsOutdatedCheckUseCase
+import com.example.music_app.domain.use_cases.RequestRefreshTokenUseCase
 import com.example.music_app.ui.navigation.Screens
+import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +16,9 @@ import kotlinx.coroutines.launch
 private const val WAIT_TIME: Long = 2000
 
 class MainActivityViewModel(
-    private val isAuthorizedCheckUseCase: IsAuthorizedCheckUseCase
+    private val isAuthorizedCheckUseCase: IsAuthorizedCheckUseCase,
+    private val isOutdatedCheckUseCase: IsOutdatedCheckUseCase,
+    private val requestRefreshTokenUseCase: RequestRefreshTokenUseCase
 ) : ViewModel() {
 
     private val _isSplashScreenVisible: MutableStateFlow<Boolean> = MutableStateFlow(true)
@@ -27,13 +32,22 @@ class MainActivityViewModel(
 
     private fun checkStatus() {
         viewModelScope.launch {
-            isAuthorizedCheckUseCase()
-                .collect {isAuth ->
-                    _route.value = if (isAuth) Screens.PlaylistsScreen else Screens.LoginScreen
-                    delay(WAIT_TIME)
-                    _isSplashScreenVisible.value = false
+            isAuthorizedCheckUseCase().onSuccess { isAuth ->
+                when {
+                    !isAuth -> _route.value = Screens.LoginScreen
+                    isOutdatedCheckUseCase().component1()?: false -> {
+                        requestRefreshTokenUseCase().collect { token ->
+                            if (token.component1() != null) {
+                                _route.value =
+                                    Screens.PlaylistsScreen
+                            }
+                        }
+                    }
+                    else -> _route.value = Screens.PlaylistsScreen
                 }
+            }
+            delay(WAIT_TIME)
+            _isSplashScreenVisible.value = false
         }
     }
-
 }

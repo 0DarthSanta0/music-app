@@ -1,6 +1,5 @@
 package com.example.music_app.ui.navigation
 
-const val MAIN_SCREEN = "main_screen"
 const val LOGIN_SCREEN = "login_screen"
 const val PLAYLISTS_SCREEN = "playlists_screen"
 
