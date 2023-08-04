@@ -5,16 +5,21 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Query
 
-private const val BASE_URL = "https://api.spotify.com/v1/me/playlists"
+private const val BASE_URL = "https://api.spotify.com/"
 
 private const val AUTHORIZATION = "Authorization"
+private const val OFFSET = "offset"
+private const val LIMIT = "limit"
 
 interface PlaylistsService {
 
-    @GET
+    @GET("v1/me/playlists")
     suspend fun getListOfPlaylists(
         @Header(AUTHORIZATION) authorization: String,
+        @Query(OFFSET) offset: String,
+        @Query(LIMIT) limit: String
     ): PlaylistsResponse
 
     companion object PlaylistsHelper {
