@@ -1,11 +1,13 @@
 package com.example.music_app.ui.screens.playlists
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.music_app.data.data_store.DataStoreManagerImpl
+import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsUseCase
@@ -18,6 +20,9 @@ class PlaylistsViewModel(
     private val requestPlaylistsUseCase: RequestPlaylistsUseCase
 ) : ViewModel() {
 
+    private var totalSize: Int? = null
+    private var offset = 0
+    private val LIMIT = 10
     private val _playlistsForDisplay: MutableStateFlow<List<Playlist>?> = MutableStateFlow(null)
     val playlistsForDisplay: StateFlow<List<Playlist>?> get() = _playlistsForDisplay
 
@@ -25,14 +30,22 @@ class PlaylistsViewModel(
         requestPlaylists()
     }
 
-    fun requestPlaylists() {
+    private fun requestPlaylists() {
         viewModelScope.launch {
-            requestPlaylistsUseCase(0, 10).collect { playlistsData ->
-                playlistsData.onSuccess { playlists ->
-                    _playlistsForDisplay.value = playlists
+            requestPlaylistsUseCase(offset, LIMIT).collect { playlistsData ->
+                playlistsData.onSuccess { listOfPlaylists: ListOfPlaylists ->
+                    _playlistsForDisplay.value =
+                        _playlistsForDisplay.value?.plus(listOfPlaylists.playlists)
+                            ?: listOfPlaylists.playlists
+                    totalSize = listOfPlaylists.totalSize
+                    offset += LIMIT
                 }
             }
         }
+    }
+
+    fun isScrollOnEnd(lazyListState: LazyListState) {
+        if (lazyListState.firstVisibleItemIndex == (offset - 5)) requestPlaylists()
     }
 
     companion object {

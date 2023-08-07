@@ -8,6 +8,7 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 
 private const val BASE_URL = "https://api.spotify.com/"
+private const val GET_URL = "v1/me/playlists"
 
 private const val AUTHORIZATION = "Authorization"
 private const val OFFSET = "offset"
@@ -15,7 +16,7 @@ private const val LIMIT = "limit"
 
 interface PlaylistsService {
 
-    @GET("v1/me/playlists")
+    @GET(GET_URL)
     suspend fun getListOfPlaylists(
         @Header(AUTHORIZATION) authorization: String,
         @Query(OFFSET) offset: String,
@@ -23,10 +24,9 @@ interface PlaylistsService {
     ): PlaylistsResponse
 
     companion object PlaylistsHelper {
-        private const val SPOTIFY_URL = BASE_URL
         fun getInstance(): PlaylistsService {
             return Retrofit.Builder()
-                .baseUrl(SPOTIFY_URL)
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(PlaylistsService::class.java)

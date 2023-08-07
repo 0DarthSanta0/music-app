@@ -2,6 +2,7 @@ package com.example.music_app.data.repositories
 
 import com.example.music_app.AppErrors
 import com.example.music_app.data.data_store.DataStoreManager
+import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.domain.repositories.PlaylistsRepository
 import com.example.music_app.network.PlaylistsService
@@ -25,7 +26,7 @@ class PlaylistsRepositoryImpl(
     override suspend fun requestListOfPlaylists(
         offset: Int,
         limit: Int
-    ): Flow<Result<List<Playlist>, AppErrors>> = flow {
+    ): Flow<Result<ListOfPlaylists, AppErrors>> = flow {
         val token = dataStoreManager.getString(TOKEN_KEY)
         val header = "$BEARER $token"
         val playlistsResponse = spotifyAPI.getListOfPlaylists(
@@ -35,6 +36,7 @@ class PlaylistsRepositoryImpl(
         )
         emit(
             if (playlistsResponse.items != null) {
+                val totalSize = playlistsResponse.total
                 val playlists = playlistsResponse.items.map { playlistItem ->
                     Playlist(
                         name = playlistItem.name,
@@ -42,7 +44,7 @@ class PlaylistsRepositoryImpl(
                         images = playlistItem.images
                     )
                 }
-                Ok(playlists)
+                Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))
             } else {
                 Err(AppErrors.ResponseError)
             }
