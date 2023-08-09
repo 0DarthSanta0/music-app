@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
 import com.example.music_app.ui.theme.BASE_PADDING
 import com.example.music_app.ui.theme.Background1Light
+import com.example.music_app.ui.theme.Background2Light
 import com.example.music_app.ui.theme.SHAPE_SIZE
 import com.example.music_app.ui.theme.White
 
@@ -40,6 +42,10 @@ fun PlaylistsScreen(
 
     val playlists by viewModel.playlistsForDisplay.collectAsState()
     val lazyListState: LazyListState = rememberLazyListState()
+
+    LaunchedEffect(lazyListState.firstVisibleItemIndex) {
+        viewModel.isScrollOnEnd(lazyListState = lazyListState)
+    }
 
     Column(
         modifier = Modifier
@@ -79,7 +85,15 @@ fun PlaylistsScreen(
             ) {
                 if (playlists != null) {
                     items(playlists?.size ?: 0) { index ->
-                        PlaylistItem(playlists?.get(index))
+                        PlaylistItem(
+                            playlist = playlists?.get(index),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp)
+                                .clip(RoundedCornerShape(SHAPE_SIZE))
+                                .background(Background2Light)
+                                .padding(BASE_PADDING)
+                        )
                     }
                 }
             }
@@ -107,8 +121,5 @@ fun PlaylistsScreen(
                 }
             }
         }
-    }
-    LaunchedEffect(lazyListState.firstVisibleItemIndex) {
-        viewModel.isScrollOnEnd(lazyListState = lazyListState)
     }
 }

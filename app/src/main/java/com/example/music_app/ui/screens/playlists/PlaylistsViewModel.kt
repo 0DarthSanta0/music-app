@@ -9,7 +9,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
-import com.example.music_app.data.repositories.PlaylistsRepositoryImpl
+import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsUseCase
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow

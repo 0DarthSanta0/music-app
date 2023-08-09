@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.music_app.data.data_store.DataStoreManagerImpl
-import com.example.music_app.data.repositories.LoginRepositoryImpl
+import com.example.music_app.data.repositories.login.LoginRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestTokenUseCase
 import kotlinx.coroutines.launch
 

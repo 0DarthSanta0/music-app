@@ -1,26 +1,22 @@
-package com.example.music_app.data.repositories
+package com.example.music_app.data.repositories.playlists
 
 import com.example.music_app.AppErrors
 import com.example.music_app.data.data_store.DataStoreManager
 import com.example.music_app.data.models.ListOfPlaylists
-import com.example.music_app.data.models.Playlist
 import com.example.music_app.domain.repositories.PlaylistsRepository
+import com.example.music_app.network.AuthInterceptor
 import com.example.music_app.network.PlaylistsService
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import okhttp3.OkHttpClient
 
 private const val TOKEN_KEY = "access_token"
 
-private const val BEARER = "Bearer"
-
 class PlaylistsRepositoryImpl(
     private val dataStoreManager: DataStoreManager,
-    private val spotifyAPI: PlaylistsService = PlaylistsService.getInstance()
 ) : PlaylistsRepository {
 
     override suspend fun requestListOfPlaylists(
@@ -28,26 +24,23 @@ class PlaylistsRepositoryImpl(
         limit: Int
     ): Flow<Result<ListOfPlaylists, AppErrors>> = flow {
         val token = dataStoreManager.getString(TOKEN_KEY)
-        val header = "$BEARER $token"
+        val authInterceptor = AuthInterceptor(token)
+        val client = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .build()
+        val spotifyAPI = PlaylistsService.getInstance(client)
         val playlistsResponse = spotifyAPI.getListOfPlaylists(
-            authorization = header,
             offset = offset.toString(),
             limit = limit.toString()
         )
         emit(
             if (playlistsResponse.items != null) {
                 val totalSize = playlistsResponse.total
-                val playlists = playlistsResponse.items.map { playlistItem ->
-                    Playlist(
-                        name = playlistItem.name,
-                        description = playlistItem.description,
-                        images = playlistItem.images
-                    )
-                }
+                val playlists = playlistsResponse.items.toPlaylistList()
                 Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))
             } else {
                 Err(AppErrors.ResponseError)
             }
         )
-    }.flowOn(Dispatchers.IO)
+    }
 }
