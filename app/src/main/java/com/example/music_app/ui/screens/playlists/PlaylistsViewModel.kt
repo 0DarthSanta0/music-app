@@ -1,6 +1,5 @@
 package com.example.music_app.ui.screens.playlists
 
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -16,15 +15,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+private const val LIMIT = 10
+
 class PlaylistsViewModel(
     private val requestPlaylistsUseCase: RequestPlaylistsUseCase
 ) : ViewModel() {
 
     private var totalSize: Int? = null
     private var offset = 0
-    private val LIMIT = 10
     private val _playlistsForDisplay: MutableStateFlow<List<Playlist>?> = MutableStateFlow(null)
     val playlistsForDisplay: StateFlow<List<Playlist>?> get() = _playlistsForDisplay
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> get() = _isLoading
 
     init {
         requestPlaylists()
@@ -39,13 +41,17 @@ class PlaylistsViewModel(
                             ?: listOfPlaylists.playlists
                     totalSize = listOfPlaylists.totalSize
                     offset += LIMIT
+                    _isLoading.value = false
                 }
             }
         }
     }
 
-    fun isScrollOnEnd(lazyListState: LazyListState) {
-        if (lazyListState.firstVisibleItemIndex == (offset - 5)) requestPlaylists()
+    fun isScrollOnEnd(firstVisibleItemIndex: Int) {
+        if (firstVisibleItemIndex == (offset - 5) && (totalSize?.minus(offset) ?: 0) > 0) {
+            _isLoading.value = true
+            requestPlaylists()
+        }
     }
 
     companion object {

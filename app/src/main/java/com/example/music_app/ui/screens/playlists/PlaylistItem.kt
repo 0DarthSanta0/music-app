@@ -22,17 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.music_app.R
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.ui.theme.BASE_PADDING
 import com.example.music_app.ui.theme.IMAGE_SIZE
 import com.example.music_app.ui.theme.SHAPE_SIZE
+import com.example.music_app.ui.theme.TEXT_TOP_PADDING
 import com.example.music_app.ui.theme.White
-
-private const val DEFAULT_IMAGE =
-    "https://play-lh.googleusercontent.com/qZpgL9UUqJ4vqDPV8nRYACCt5DUFrMZxJHwozHNsckNBa3x3nWcliksooqaw_DEzvQ=w240-h480-rw"
-private const val DEFAULT_TEXT = "Something went wrong"
 
 @Composable
 fun PlaylistItem(
@@ -47,11 +44,6 @@ fun PlaylistItem(
         verticalAlignment = Alignment.Top,
         modifier = modifier
     ) {
-        val image = if (!playlist?.images.isNullOrEmpty()) {
-            playlist?.images?.get(0)?.url
-        } else {
-            DEFAULT_IMAGE
-        }
         Box(
             modifier = Modifier
                 .height(IMAGE_SIZE)
@@ -61,7 +53,11 @@ fun PlaylistItem(
                 onSuccess = {
                     isLoading = false
                 },
-                model = image,
+                model = if (!playlist?.images.isNullOrEmpty()) {
+                    playlist?.images?.get(0)?.url
+                } else {
+                    R.drawable.default_image
+                },
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
@@ -81,16 +77,16 @@ fun PlaylistItem(
         ) {
             Text(
                 style = MaterialTheme.typography.titleLarge,
-                text = playlist?.name ?: DEFAULT_TEXT,
+                text = playlist?.name ?: "",
                 color = White,
                 modifier = Modifier.padding(start = BASE_PADDING),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = playlist?.description ?: DEFAULT_TEXT,
+                text = playlist?.description ?: "",
                 color = White,
-                modifier = Modifier.padding(start = BASE_PADDING, top = 5.dp),
+                modifier = Modifier.padding(start = BASE_PADDING, top = TEXT_TOP_PADDING),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
