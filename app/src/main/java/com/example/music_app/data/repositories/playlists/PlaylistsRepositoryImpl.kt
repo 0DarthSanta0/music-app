@@ -33,10 +33,10 @@ class PlaylistsRepositoryImpl(
             offset = offset.toString(),
             limit = limit.toString()
         )
+        val totalSize = playlistsResponse.total
+        val playlists = playlistsResponse.toPlaylistList()
         emit(
-            if (playlistsResponse.items != null) {
-                val totalSize = playlistsResponse.total
-                val playlists = playlistsResponse.items.toPlaylistList()
+            if (playlists != null) {
                 Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))
             } else {
                 Err(AppErrors.ResponseError)

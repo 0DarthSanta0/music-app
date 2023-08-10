@@ -23,8 +23,8 @@ class PlaylistsViewModel(
 
     private var totalSize: Int? = null
     private var offset = 0
-    private val _playlistsForDisplay: MutableStateFlow<List<Playlist>?> = MutableStateFlow(null)
-    val playlistsForDisplay: StateFlow<List<Playlist>?> get() = _playlistsForDisplay
+    private val _playlistsForDisplay: MutableStateFlow<List<Playlist>> = MutableStateFlow(listOf())
+    val playlistsForDisplay: StateFlow<List<Playlist>> get() = _playlistsForDisplay
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> get() = _isLoading
 
@@ -37,8 +37,7 @@ class PlaylistsViewModel(
             requestPlaylistsUseCase(offset, LIMIT).collect { playlistsData ->
                 playlistsData.onSuccess { listOfPlaylists: ListOfPlaylists ->
                     _playlistsForDisplay.value =
-                        _playlistsForDisplay.value?.plus(listOfPlaylists.playlists)
-                            ?: listOfPlaylists.playlists
+                        _playlistsForDisplay.value + listOfPlaylists.playlists
                     totalSize = listOfPlaylists.totalSize
                     offset += LIMIT
                     _isLoading.value = false

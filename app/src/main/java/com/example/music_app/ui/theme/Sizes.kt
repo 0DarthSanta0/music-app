@@ -19,7 +19,7 @@ val SHAPE_SIZE = Dimensions.spacing08
 val IMAGE_SIZE = Dimensions.spacing80
 
 val BASE_PADDING = Dimensions.spacing10
-val TEXT_TOP_PADDING = Dimensions.spacing05
+val TEXT_SPACER_SIZE = Dimensions.spacing05
 
 val BUTTON_HEIGHT = Dimensions.spacing40
 val BUTTON_WIDTH = Dimensions.spacing170
