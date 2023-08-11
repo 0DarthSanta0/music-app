@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
@@ -55,7 +54,7 @@ class PlaylistsViewModel(
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
-            val playlistsRepository = PlaylistsRepositoryImpl(DataStoreManagerImpl)
+            val playlistsRepository = PlaylistsRepositoryImpl()
             initializer {
                 PlaylistsViewModel(
                     requestPlaylistsUseCase = RequestPlaylistsUseCase(playlistsRepository = playlistsRepository)
