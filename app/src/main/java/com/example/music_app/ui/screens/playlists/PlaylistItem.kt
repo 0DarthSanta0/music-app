@@ -20,15 +20,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
 import com.example.music_app.R
 import com.example.music_app.data.models.Playlist
-import com.example.music_app.ui.theme.BASE_PADDING
-import com.example.music_app.ui.theme.IMAGE_SIZE
-import com.example.music_app.ui.theme.SHAPE_SIZE
-import com.example.music_app.ui.theme.TEXT_SPACER_SIZE
-import com.example.music_app.ui.theme.White
+import com.example.music_app.ui.theme.AppTheme
 
 @Composable
 fun PlaylistItem(
@@ -43,22 +40,23 @@ fun PlaylistItem(
     ) {
         Box(
             modifier = Modifier
-                .height(IMAGE_SIZE)
-                .width(IMAGE_SIZE)
+                .height(AppTheme.dimens.spacing80)
+                .width(AppTheme.dimens.spacing80)
         ) {
+            val painter = painterResource(id = R.drawable.default_image)
             AsyncImage(
+                onError = {
+                    isLoading = false
+                },
                 onSuccess = {
                     isLoading = false
                 },
-                model = if (playlist.images.isNotEmpty()) {
-                    playlist.images[0].url
-                } else {
-                    R.drawable.default_image
-                },
+                error = painter,
+                model = playlist.images.firstOrNull()?.url,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(SHAPE_SIZE))
+                    .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
             )
             if (isLoading) {
                 CircularProgressIndicator(
@@ -69,21 +67,21 @@ fun PlaylistItem(
             }
         }
         Column(
-            modifier = Modifier.padding(start = BASE_PADDING),
+            modifier = Modifier.padding(start = AppTheme.dimens.spacing10),
         ) {
             Text(
                 style = MaterialTheme.typography.titleLarge,
                 text = playlist.name,
-                color = White,
+                color = MaterialTheme.colorScheme.background,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(
-                modifier = Modifier.height(TEXT_SPACER_SIZE)
+                modifier = Modifier.height(AppTheme.dimens.spacing05)
             )
             Text(
                 text = playlist.description,
-                color = White,
+                color = MaterialTheme.colorScheme.background,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )

@@ -1,5 +1,6 @@
 package com.example.music_app.network
 
+import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.PlaylistsResponse
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -13,6 +14,8 @@ private const val GET_URL = "v1/me/playlists"
 private const val OFFSET = "offset"
 private const val LIMIT = "limit"
 
+private const val TOKEN_KEY = "access_token"
+
 interface PlaylistsService {
 
     @GET(GET_URL)
@@ -22,7 +25,12 @@ interface PlaylistsService {
     ): PlaylistsResponse
 
     companion object PlaylistsHelper {
-        fun getInstance(client: OkHttpClient): PlaylistsService {
+        suspend fun getInstance(): PlaylistsService {
+            val token = DataStoreManagerImpl.getString(TOKEN_KEY)
+            val authInterceptor = AuthInterceptor(token)
+            val client = OkHttpClient.Builder()
+                .addInterceptor(authInterceptor)
+                .build()
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())

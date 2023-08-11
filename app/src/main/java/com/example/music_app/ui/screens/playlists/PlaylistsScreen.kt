@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,13 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
-import com.example.music_app.ui.theme.BASE_PADDING
-import com.example.music_app.ui.theme.BLOCK_SIZE
-import com.example.music_app.ui.theme.BUTTON_HEIGHT
-import com.example.music_app.ui.theme.BUTTON_WIDTH
-import com.example.music_app.ui.theme.Background1Light
-import com.example.music_app.ui.theme.SHAPE_SIZE
-import com.example.music_app.ui.theme.White
+import com.example.music_app.ui.theme.AppTheme
 
 @Preview
 @Composable
@@ -54,25 +49,25 @@ fun PlaylistsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(White)
-            .padding(BASE_PADDING),
-        verticalArrangement = Arrangement.spacedBy(BASE_PADDING),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(AppTheme.dimens.spacing10),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
         horizontalAlignment = CenterHorizontally
     ) {
         Surface(
-            color = Background1Light,
-            shape = RoundedCornerShape(SHAPE_SIZE),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            shape = RoundedCornerShape(AppTheme.dimens.spacing08),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(BLOCK_SIZE)
+                .height(AppTheme.dimens.spacing80)
         ) {
         }
         Surface(
-            color = Background1Light,
-            shape = RoundedCornerShape(SHAPE_SIZE),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            shape = RoundedCornerShape(AppTheme.dimens.spacing08),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(BLOCK_SIZE)
+                .height(AppTheme.dimens.spacing80)
         ) {
         }
         Box(
@@ -80,15 +75,15 @@ fun PlaylistsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .clip(RoundedCornerShape(SHAPE_SIZE))
-                .background(Background1Light)
+                .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
                     color = Color.Blue,
                     modifier = Modifier
-                        .height(BLOCK_SIZE)
-                        .width(BLOCK_SIZE)
+                        .height(AppTheme.dimens.spacing80)
+                        .width(AppTheme.dimens.spacing80)
                 )
             } else {
                 PlaylistsField(
@@ -104,15 +99,15 @@ fun PlaylistsScreen(
             horizontalAlignment = CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(BLOCK_SIZE)
-                .clip(RoundedCornerShape(SHAPE_SIZE))
-                .background(Background1Light)
+                .height(AppTheme.dimens.spacing80)
+                .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
             Button(
                 onClick = { },
                 modifier = Modifier
-                    .width(BUTTON_WIDTH)
-                    .height(BUTTON_HEIGHT)
+                    .width(AppTheme.dimens.spacing170)
+                    .height(AppTheme.dimens.spacing40)
             ) {
                 Text(text = stringResource(R.string.new_playlist))
             }

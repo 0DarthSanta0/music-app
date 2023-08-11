@@ -9,7 +9,11 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -21,7 +25,23 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryLight,
     secondary = SecondaryLight,
+    primaryContainer = Background1Light,
+    secondaryContainer = Background2Light,
+    background = Color.White
 )
+
+@Composable
+fun ProvideDimens(
+    dimensions: Dimensions,
+    content: @Composable () -> Unit
+) {
+    val dimensionSet = remember { dimensions }
+    CompositionLocalProvider(LocalAppDimens provides dimensionSet, content = content)
+}
+
+private val LocalAppDimens = staticCompositionLocalOf {
+    defaultDimensions
+}
 
 @Composable
 fun MusicAppTheme(
@@ -38,6 +58,7 @@ fun MusicAppTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+    val dimensions = defaultDimensions
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -47,9 +68,21 @@ fun MusicAppTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    ProvideDimens(dimensions = dimensions) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content,
+        )
+    }
 }
+
+object AppTheme {
+    val dimens: Dimensions
+        @Composable
+        get() = LocalAppDimens.current
+}
+
+val Dimens: Dimensions
+    @Composable
+    get() = AppTheme.dimens

@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import com.example.music_app.data.models.Playlist
-import com.example.music_app.ui.theme.BASE_PADDING
-import com.example.music_app.ui.theme.Background2Light
-import com.example.music_app.ui.theme.PLAYLIST_ITEM_SIZE
-import com.example.music_app.ui.theme.SHAPE_SIZE
+import com.example.music_app.ui.theme.AppTheme
 
 @Composable
 fun PlaylistsField(
@@ -26,8 +24,8 @@ fun PlaylistsField(
 ) {
     LazyColumn(
         state = lazyListState,
-        contentPadding = PaddingValues(BASE_PADDING),
-        verticalArrangement = Arrangement.spacedBy(BASE_PADDING),
+        contentPadding = PaddingValues(AppTheme.dimens.spacing10),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
         modifier = modifier
     ) {
         if (playlists.isNotEmpty()) {
@@ -37,10 +35,10 @@ fun PlaylistsField(
                     playlist = playlist,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(PLAYLIST_ITEM_SIZE)
-                        .clip(RoundedCornerShape(SHAPE_SIZE))
-                        .background(Background2Light)
-                        .padding(BASE_PADDING)
+                        .height(AppTheme.dimens.spacing100)
+                        .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
+                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .padding(AppTheme.dimens.spacing10)
                 )
             }
         }
