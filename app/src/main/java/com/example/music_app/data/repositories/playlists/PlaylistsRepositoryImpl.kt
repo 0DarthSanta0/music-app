@@ -2,6 +2,7 @@ package com.example.music_app.data.repositories.playlists
 
 import com.example.music_app.AppErrors
 import com.example.music_app.data.models.ListOfPlaylists
+import com.example.music_app.data.models.PlaylistItemResponse
 import com.example.music_app.domain.repositories.PlaylistsRepository
 import com.example.music_app.network.PlaylistsService
 import com.github.michaelbull.result.Err
@@ -22,9 +23,9 @@ class PlaylistsRepositoryImpl(
             limit = limit.toString()
         )
         val totalSize = playlistsResponse.total
-        val playlists = playlistsResponse.toPlaylistList()
+        val playlists = playlistsResponse.items?.map(PlaylistItemResponse::toPlaylist)
         emit(
-            if (playlists != null) {
+            if (playlists != null && totalSize != null) {
                 Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))
             } else {
                 Err(AppErrors.ResponseError)

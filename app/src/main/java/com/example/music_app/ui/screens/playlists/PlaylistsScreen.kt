@@ -2,7 +2,6 @@ package com.example.music_app.ui.screens.playlists
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,18 +12,15 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -70,30 +66,14 @@ fun PlaylistsScreen(
                 .height(AppTheme.dimens.spacing80)
         ) {
         }
-        Box(
-            contentAlignment = Alignment.Center,
+        PlaylistsField(
+            lazyListState = lazyListState,
+            playlists = playlists,
+            isLoading = isLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
-                .background(MaterialTheme.colorScheme.primaryContainer)
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    color = Color.Blue,
-                    modifier = Modifier
-                        .height(AppTheme.dimens.spacing80)
-                        .width(AppTheme.dimens.spacing80)
-                )
-            } else {
-                PlaylistsField(
-                    lazyListState = lazyListState,
-                    playlists = playlists,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-        }
+        )
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = CenterHorizontally,

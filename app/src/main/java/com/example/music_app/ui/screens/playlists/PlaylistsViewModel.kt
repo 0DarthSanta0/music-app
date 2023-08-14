@@ -20,7 +20,7 @@ class PlaylistsViewModel(
     private val requestPlaylistsUseCase: RequestPlaylistsUseCase
 ) : ViewModel() {
 
-    private var totalSize: Int? = null
+    private var totalSize = 0
     private var offset = 0
     private val _playlistsForDisplay: MutableStateFlow<List<Playlist>> = MutableStateFlow(listOf())
     val playlistsForDisplay: StateFlow<List<Playlist>> get() = _playlistsForDisplay
@@ -46,7 +46,7 @@ class PlaylistsViewModel(
     }
 
     fun isScrollOnEnd(firstVisibleItemIndex: Int) {
-        if (firstVisibleItemIndex == (offset - 5) && (totalSize?.minus(offset) ?: 0) > 0) {
+        if (firstVisibleItemIndex == (offset - 5) && (totalSize - offset) > 0) {
             _isLoading.value = true
             requestPlaylists()
         }

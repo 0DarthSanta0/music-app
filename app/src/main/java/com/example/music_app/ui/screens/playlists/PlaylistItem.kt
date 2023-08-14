@@ -1,5 +1,6 @@
 package com.example.music_app.ui.screens.playlists
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,7 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -37,11 +38,12 @@ fun PlaylistItem(
 
     Row(
         modifier = modifier
+            .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
+            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .padding(AppTheme.dimens.spacing10)
     ) {
         Box(
-            modifier = Modifier
-                .height(AppTheme.dimens.spacing80)
-                .width(AppTheme.dimens.spacing80)
+            modifier = Modifier.size(AppTheme.dimens.spacing80)
         ) {
             val painter = painterResource(id = R.drawable.default_image)
             AsyncImage(
@@ -52,7 +54,7 @@ fun PlaylistItem(
                     isLoading = false
                 },
                 error = painter,
-                model = playlist.images.firstOrNull()?.url,
+                model = playlist.imagesUrls.firstOrNull(),
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
@@ -61,8 +63,7 @@ fun PlaylistItem(
             if (isLoading) {
                 CircularProgressIndicator(
                     color = Color.Blue,
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 )
             }
         }
@@ -76,9 +77,7 @@ fun PlaylistItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(
-                modifier = Modifier.height(AppTheme.dimens.spacing05)
-            )
+            Spacer(modifier = Modifier.height(AppTheme.dimens.spacing05))
             Text(
                 text = playlist.description,
                 color = MaterialTheme.colorScheme.background,
