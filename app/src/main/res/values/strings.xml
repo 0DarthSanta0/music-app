@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">music-app</string>
+    <string name="create_button">Create</string>
+    <string name="name_field">Enter playlist name</string>
+    <string name="description_field">Enter playlist description</string>
+    <string name="empty_field_error">This field cannot be empty</string>
 </resources>
