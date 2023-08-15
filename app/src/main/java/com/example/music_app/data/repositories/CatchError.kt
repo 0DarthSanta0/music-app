@@ -1,6 +1,6 @@
 package com.example.music_app.data.repositories
 
-import com.example.music_app.data.models.AppErrors
+import com.example.music_app.AppErrors
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
