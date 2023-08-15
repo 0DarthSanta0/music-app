@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
+import com.example.music_app.ui.theme.AppTheme
+
+private const val MAX_NAME_SIZE = 20
+private const val MAX_DESCRIPTION_SIZE = 300
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -47,16 +50,16 @@ fun NewPlaylistScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+            .padding(AppTheme.dimens.spacing10),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
         horizontalAlignment = CenterHorizontally
     ) {
         Surface(
             color = MaterialTheme.colorScheme.primaryContainer,
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(AppTheme.dimens.spacing08),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(AppTheme.dimens.spacing80)
         ) {
         }
         Column(
@@ -64,18 +67,17 @@ fun NewPlaylistScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .clip(RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
                 .background(MaterialTheme.colorScheme.primaryContainer)
-                .padding(20.dp)
+                .padding(AppTheme.dimens.spacing20)
         ) {
-            Text(text = "Name")
-            Spacer(modifier = Modifier.height(10.dp))
+            Text(stringResource(R.string.name))
+            Spacer(modifier = Modifier.height(AppTheme.dimens.spacing10))
             OutlinedTextField(
-
                 value = nameFieldState.value,
-                onValueChange = {
-                    nameFieldState.value = it
-                    isNameValid.value = it.isNotBlank()
+                onValueChange = {newValue ->
+                    if (MAX_NAME_SIZE >= newValue.length) nameFieldState.value = newValue
+                    isNameValid.value = newValue.isNotBlank()
                     isNameFieldActive.value = true
                 },
                 isError = !isNameValid.value && isNameFieldActive.value,
@@ -87,29 +89,29 @@ fun NewPlaylistScreen(
                     }
                 },
                 modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color.White)
-
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
+                    .background(Color.White),
+                singleLine = true,
+                shape = RoundedCornerShape(AppTheme.dimens.spacing20)
             )
-            Spacer(modifier = Modifier.height(30.dp))
-            Text(text = "Description")
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(AppTheme.dimens.spacing30))
+            Text(stringResource(R.string.description))
+            Spacer(modifier = Modifier.height(AppTheme.dimens.spacing10))
             OutlinedTextField(
                 value = descriptionFieldState.value,
-                onValueChange = { descriptionFieldState.value = it },
+                onValueChange = {newValue ->
+                    if (MAX_DESCRIPTION_SIZE >= newValue.length) descriptionFieldState.value = newValue
+                },
                 modifier = Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(20.dp))
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
                     .background(Color.White),
                 placeholder = {
                     Text(stringResource(R.string.description_field))
                 },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Green,
-                    unfocusedBorderColor = Color.Red,
-                    disabledBorderColor = Color.Gray
-                )
-
+                shape = RoundedCornerShape(AppTheme.dimens.spacing20)
             )
         }
         Column(
@@ -126,7 +128,7 @@ fun NewPlaylistScreen(
                     if (isNameValid.value) {
                         viewModel.createPlaylist(
                             name = nameFieldState.value,
-                            description = descriptionFieldState.value
+                            description = descriptionFieldState.value.ifEmpty { null }
                         )
                     } else {
                         isNameFieldActive.value = true

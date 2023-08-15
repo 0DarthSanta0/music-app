@@ -33,7 +33,18 @@ class PlaylistsRepositoryImpl(
         )
     }
 
-    override fun createPlaylist(name: String, description: String) {
-
+    override suspend fun createPlaylist(
+        name: String,
+        description: String?
+    ) {
+        val userIdResponse = spotifyAPI.getCurrentUser().id
+        if (userIdResponse != null) {
+//            val postResponse = spotifyAPI.createPlaylist(
+//                user = userIdResponse,
+//                body = BodyName(
+//                    name = name
+//                )
+//            )
+        }
     }
 }
