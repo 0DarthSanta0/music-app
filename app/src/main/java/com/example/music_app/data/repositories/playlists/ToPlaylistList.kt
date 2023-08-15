@@ -6,7 +6,6 @@ import com.example.music_app.data.models.PlaylistItemResponse
 fun PlaylistItemResponse.toPlaylist() = Playlist(
     name = name,
     description = description,
-    imagesUrls = images.map { image ->
-        image.url
-    }
+    imageUrl = images.firstOrNull()?.url,
+    id = id
 )

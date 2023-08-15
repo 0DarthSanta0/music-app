@@ -54,7 +54,7 @@ fun PlaylistItem(
                     isLoading = false
                 },
                 error = painter,
-                model = playlist.imagesUrls.firstOrNull(),
+                model = playlist.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()

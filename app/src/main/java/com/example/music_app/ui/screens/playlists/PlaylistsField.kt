@@ -48,7 +48,10 @@ fun PlaylistsField(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                items(playlists) { playlist ->
+                items(
+                    items = playlists,
+                    key = { playlists -> playlists.id }
+                ) { playlist ->
                     PlaylistItem(
                         playlist = playlist,
                         modifier = Modifier
