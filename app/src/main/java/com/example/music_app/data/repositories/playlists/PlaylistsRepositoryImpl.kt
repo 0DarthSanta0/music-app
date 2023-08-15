@@ -32,4 +32,8 @@ class PlaylistsRepositoryImpl(
             }
         )
     }
+
+    override fun createPlaylist(name: String, description: String) {
+
+    }
 }

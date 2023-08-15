@@ -1,5 +1,6 @@
 package com.example.music_app.ui.screens.playlists
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,18 +23,17 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
 import com.example.music_app.ui.theme.AppTheme
 
-@Preview
+@SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 fun PlaylistsScreen(
-    viewModel: PlaylistsViewModel = viewModel(factory = PlaylistsViewModel.Factory)
+    viewModel: PlaylistsViewModel = viewModel(factory = PlaylistsViewModel.Factory),
+    onAddNewPlaylist: () -> Unit,
 ) {
-
     val playlists by viewModel.playlistsForDisplay.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val lazyListState: LazyListState = rememberLazyListState()
@@ -84,7 +84,7 @@ fun PlaylistsScreen(
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
             Button(
-                onClick = { },
+                onClick = { onAddNewPlaylist() },
                 modifier = Modifier
                     .width(AppTheme.dimens.spacing170)
                     .height(AppTheme.dimens.spacing40)

@@ -1,7 +1,6 @@
 package com.example.music_app.ui.screens.new_playlist
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -142,6 +141,3 @@ fun NewPlaylistScreen(
         }
     }
 }
-
-
-
