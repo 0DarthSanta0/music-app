@@ -1,22 +1,20 @@
-package com.example.music_app.data.repositories
+package com.example.music_app.data.repositories.login
 
+import com.example.music_app.AppErrors
 import com.example.music_app.constants.REDIRECT_URL
 import com.example.music_app.constants.SPOTIFY_CLIENT_ID
 import com.example.music_app.constants.SPOTIFY_CLIENT_SECRET
 import com.example.music_app.data.data_store.DataStoreManager
-import com.example.music_app.data.models.AppErrors
-import com.example.music_app.data.models.ResponseError
 import com.example.music_app.data.models.TokenRefreshResponse
 import com.example.music_app.data.models.TokenResponse
+import com.example.music_app.data.repositories.catchErrors
 import com.example.music_app.domain.repositories.LoginRepository
 import com.example.music_app.network.AuthService
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import java.time.Instant
 import java.util.Base64
 
@@ -51,12 +49,12 @@ class LoginRepositoryImpl(
                 saveToken(token)
                 Ok(token)
             } else {
-                Err(ResponseError())
+                Err(AppErrors.ResponseError)
             }
         )
-    }.flowOn(Dispatchers.IO)
+    }
 
-    override suspend fun requestRefreshToken(): Flow<Result<TokenRefreshResponse, ResponseError>> =
+    override suspend fun requestRefreshToken(): Flow<Result<TokenRefreshResponse, AppErrors>> =
         flow {
             val refreshToken = dataStoreManager.getString(REFRESH_TOKEN_KEY)
             val token =
@@ -70,7 +68,7 @@ class LoginRepositoryImpl(
                     saveRefreshToken(token)
                     Ok(token)
                 } else {
-                    Err(ResponseError())
+                    Err(AppErrors.ResponseError)
                 }
             )
         }

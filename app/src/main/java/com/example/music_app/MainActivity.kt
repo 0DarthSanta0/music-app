@@ -12,7 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.music_app.ui.navigation.Navigation
-import com.example.music_app.ui.theme.MusicappTheme
+import com.example.music_app.ui.theme.MusicAppTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition { viewModel.isSplashScreenVisible.value }
         setContent {
             val screen by viewModel.route.collectAsState()
-            MusicappTheme {
+            MusicAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
