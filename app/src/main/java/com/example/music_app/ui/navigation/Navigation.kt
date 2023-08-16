@@ -27,7 +27,9 @@ fun Navigation(startScreen: Screens?) {
             })
         }
         composable(route = Screens.NewPlaylistScreen.route) {
-            NewPlaylistScreen()
+            NewPlaylistScreen(onCreatePlaylistSuccess = {
+                navController.navigate(Screens.PlaylistsScreen.route)
+            })
         }
     }
 }

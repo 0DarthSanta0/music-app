@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.ui.theme.AppTheme
 
@@ -34,30 +33,37 @@ fun PlaylistsField(
             .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
             .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                color = Color.Blue,
-                modifier = Modifier
-                    .size(AppTheme.dimens.spacing80)
-            )
-        } else {
-            LazyColumn(
-                state = lazyListState,
-                contentPadding = PaddingValues(AppTheme.dimens.spacing10),
-                verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                items(
-                    items = playlists,
-                    key = { playlists -> playlists.id }
-                ) { playlist ->
-                    PlaylistItem(
-                        playlist = playlist,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(AppTheme.dimens.spacing100)
-                    )
+
+        LazyColumn(
+            state = lazyListState,
+            contentPadding = PaddingValues(AppTheme.dimens.spacing10),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            items(
+                items = playlists,
+                key = { playlists -> playlists.id }
+            ) { playlist ->
+                PlaylistItem(
+                    playlist = playlist,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(AppTheme.dimens.spacing100)
+                )
+            }
+            item {
+                if (isLoading) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .size(AppTheme.dimens.spacing20)
+                        )
+                    }
                 }
             }
         }

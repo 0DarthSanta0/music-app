@@ -1,6 +1,7 @@
 package com.example.music_app.data.repositories.playlists
 
 import com.example.music_app.AppErrors
+import com.example.music_app.data.models.CreatePlaylistBody
 import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.PlaylistItemResponse
 import com.example.music_app.domain.repositories.PlaylistsRepository
@@ -36,15 +37,21 @@ class PlaylistsRepositoryImpl(
     override suspend fun createPlaylist(
         name: String,
         description: String?
-    ) {
+    ): Flow<Result<Boolean, AppErrors>> = flow {
         val userIdResponse = spotifyAPI.getCurrentUser().id
         if (userIdResponse != null) {
-//            val postResponse = spotifyAPI.createPlaylist(
-//                user = userIdResponse,
-//                body = BodyName(
-//                    name = name
-//                )
-//            )
+            val postResponse = spotifyAPI.createPlaylist(
+                user = userIdResponse,
+                body = CreatePlaylistBody(
+                    name = name,
+                    description = description
+                )
+            )
+            emit(
+                if (postResponse.name != null) Ok(true) else Err(AppErrors.ResponseError)
+            )
+        } else {
+            Err(AppErrors.ResponseError)
         }
     }
 }

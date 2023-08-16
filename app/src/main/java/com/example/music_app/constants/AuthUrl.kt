@@ -4,7 +4,7 @@ const val SPOTIFY_CLIENT_ID = "67f6367abcd3497db54043591d9e7c9f"
 const val SPOTIFY_CLIENT_SECRET = "6a0137ad789a404db79c6e4d6625bf49"
 
 const val CODE = "code"
-const val SCOPE = "user-read-private user-read-email"
+const val SCOPE = "user-read-private user-read-email playlist-modify-private playlist-modify-public"
 const val REDIRECT_URL = "http://localhost:3000"
 
 const val SCOPE_QUERY_PARAM = "scope"

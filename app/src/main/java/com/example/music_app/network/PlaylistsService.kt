@@ -1,5 +1,7 @@
 package com.example.music_app.network
 
+import com.example.music_app.data.models.CreatePlaylistBody
+import com.example.music_app.data.models.CreatePlaylistResponse
 import com.example.music_app.data.models.CurrentUserResponse
 import com.example.music_app.data.models.PlaylistsResponse
 import okhttp3.OkHttpClient
@@ -21,10 +23,8 @@ private const val GET_PLAYLISTS_URL = "v1/me/playlists"
 private const val GET_USER_URL = "v1/me"
 private const val POST_PLAYLIST_URL = "v1/users/{${USER_ID}}/playlists"
 
+private const val CONTENT_TYPE_HEADER = "Content-Type: application/json"
 
-data class BodyName(
-    val name: String
-)
 
 interface PlaylistsService {
 
@@ -37,12 +37,12 @@ interface PlaylistsService {
     @GET(GET_USER_URL)
     suspend fun getCurrentUser(): CurrentUserResponse
 
-    @Headers("Content-Type: application/json")
+    @Headers(CONTENT_TYPE_HEADER)
     @POST(POST_PLAYLIST_URL)
     suspend fun createPlaylist(
         @Path(USER_ID) user: String,
-        @Body body: BodyName
-    )
+        @Body body: CreatePlaylistBody
+    ): CreatePlaylistResponse
 
     companion object PlaylistsHelper {
         fun getInstance(): PlaylistsService {
