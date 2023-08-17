@@ -11,6 +11,8 @@ import com.github.michaelbull.result.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
+private const val TYPE = "playlist"
+
 class PlaylistsRepositoryImpl(
     private var spotifyAPI: PlaylistsService = PlaylistsService.getInstance()
 ) : PlaylistsRepository {
@@ -24,6 +26,28 @@ class PlaylistsRepositoryImpl(
         )
         val totalSize = playlistsResponse.total
         val playlists = playlistsResponse.items?.map(PlaylistItemResponse::toPlaylist)
+        emit(
+            if (playlists != null && totalSize != null) {
+                Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))
+            } else {
+                Err(AppErrors.ResponseError)
+            }
+        )
+    }
+
+    override suspend fun requestPlaylistsForSearch(
+        offset: Int,
+        limit: Int,
+        prefix: String
+    ): Flow<Result<ListOfPlaylists, AppErrors>> = flow {
+        val playlistsForSearchResponse = spotifyAPI.getPlaylistsForSearch(
+            q = prefix,
+            type = TYPE,
+            offset = offset.toString(),
+            limit = limit.toString()
+        )
+        val totalSize = playlistsForSearchResponse.playlists.total
+        val playlists = playlistsForSearchResponse.playlists.items?.map(PlaylistItemResponse::toPlaylist)
         emit(
             if (playlists != null && totalSize != null) {
                 Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))

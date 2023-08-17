@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsRepository {
     suspend fun requestListOfPlaylists(offset: Int, limit: Int): Flow<Result<ListOfPlaylists, AppErrors>>
+
+    suspend fun requestPlaylistsForSearch(offset: Int, limit: Int, prefix: String): Flow<Result<ListOfPlaylists ,AppErrors>>
 }
