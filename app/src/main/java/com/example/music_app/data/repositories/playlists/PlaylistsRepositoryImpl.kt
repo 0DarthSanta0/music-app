@@ -1,9 +1,11 @@
 package com.example.music_app.data.repositories.playlists
 
 import com.example.music_app.AppErrors
+import com.example.music_app.data.data_store.DataStoreManager
 import com.example.music_app.data.models.CreatePlaylistBody
 import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.PlaylistItemResponse
+import com.example.music_app.data.repositories.catchErrors
 import com.example.music_app.domain.repositories.PlaylistsRepository
 import com.example.music_app.network.PlaylistsService
 import com.github.michaelbull.result.Err
@@ -12,7 +14,10 @@ import com.github.michaelbull.result.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
+private const val USER_ID_KEY = "user_id"
+
 class PlaylistsRepositoryImpl(
+    private val dataStoreManager: DataStoreManager,
     private var spotifyAPI: PlaylistsService = PlaylistsService.getInstance()
 ) : PlaylistsRepository {
     override suspend fun requestListOfPlaylists(
@@ -38,8 +43,9 @@ class PlaylistsRepositoryImpl(
         name: String,
         description: String?
     ): Flow<Result<Boolean, AppErrors>> = flow {
-        val userIdResponse = spotifyAPI.getCurrentUser().id
-        if (userIdResponse != null) {
+        catchErrors {
+            val userIdResponse = dataStoreManager.getString(USER_ID_KEY)
+            if (userIdResponse.isEmpty()) emit(Err(AppErrors.EmptyUserID))
             val postResponse = spotifyAPI.createPlaylist(
                 user = userIdResponse,
                 body = CreatePlaylistBody(
@@ -50,8 +56,6 @@ class PlaylistsRepositoryImpl(
             emit(
                 if (postResponse.name != null) Ok(true) else Err(AppErrors.ResponseError)
             )
-        } else {
-            Err(AppErrors.ResponseError)
         }
     }
 }

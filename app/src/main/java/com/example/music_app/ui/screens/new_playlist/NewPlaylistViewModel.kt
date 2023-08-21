@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.music_app.AppErrors
+import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.CreatePlaylistUseCase
 import com.github.michaelbull.result.Result
@@ -36,7 +37,7 @@ class NewPlaylistViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 NewPlaylistViewModel(
-                    createPlaylistUseCase = CreatePlaylistUseCase(PlaylistsRepositoryImpl())
+                    createPlaylistUseCase = CreatePlaylistUseCase(PlaylistsRepositoryImpl(DataStoreManagerImpl))
                 )
             }
         }
