@@ -11,11 +11,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
 import com.example.music_app.ui.screens.core.ButtonField
@@ -27,11 +27,11 @@ fun NewPlaylistScreen(
     viewModel: NewPlaylistViewModel = viewModel(factory = NewPlaylistViewModel.Factory),
     onCreatePlaylistSuccess: () -> Unit
 ) {
-    val nameFieldState = remember { mutableStateOf("") }
-    val descriptionFieldState = remember { mutableStateOf("") }
 
-    val isNameValid = remember { mutableStateOf(false) }
-    val isNameFieldActive = remember { mutableStateOf(false) }
+    val nameFieldState by viewModel.nameFieldState.collectAsStateWithLifecycle()
+    val descriptionFieldState by viewModel.descriptionFieldState.collectAsStateWithLifecycle()
+    val isNameValid by viewModel.isNameValid.collectAsStateWithLifecycle()
+    val isNameFieldActive by viewModel.isNameFieldActive.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -56,20 +56,14 @@ fun NewPlaylistScreen(
             isNameFieldActive = isNameFieldActive,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(1f),
+            onNameValueChange = viewModel::onNameValueChange,
+            onDescriptionValueChange = viewModel::onDescriptionValueChange
         )
         ButtonField(
             text = stringResource(R.string.create_button),
             onClick = {
-                if (isNameValid.value) {
-                    viewModel.createPlaylist(
-                        name = nameFieldState.value,
-                        description = descriptionFieldState.value.ifEmpty { null },
-                        onCreatePlaylistSuccess = onCreatePlaylistSuccess
-                    )
-                } else {
-                    isNameFieldActive.value = true
-                }
+                viewModel.onCreatePlaylist(onCreatePlaylistSuccess)
             },
             modifier = Modifier
                 .fillMaxWidth()

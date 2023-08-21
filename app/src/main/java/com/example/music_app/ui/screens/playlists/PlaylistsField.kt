@@ -25,6 +25,7 @@ fun PlaylistsField(
     lazyListState: LazyListState,
     playlists: List<Playlist>,
     isLoading: Boolean,
+    isFirstLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -33,36 +34,43 @@ fun PlaylistsField(
             .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
             .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
-
-        LazyColumn(
-            state = lazyListState,
-            contentPadding = PaddingValues(AppTheme.dimens.spacing10),
-            verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            items(
-                items = playlists,
-                key = { playlists -> playlists.id }
-            ) { playlist ->
-                PlaylistItem(
-                    playlist = playlist,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(AppTheme.dimens.spacing100)
-                )
-            }
-            item {
-                if (isLoading) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .size(AppTheme.dimens.spacing20)
-                        )
+        if (isLoading && isFirstLoading) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(AppTheme.dimens.spacing80)
+            )
+        } else {
+            LazyColumn(
+                state = lazyListState,
+                contentPadding = PaddingValues(AppTheme.dimens.spacing10),
+                verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                items(
+                    items = playlists,
+                    key = { playlists -> playlists.id }
+                ) { playlist ->
+                    PlaylistItem(
+                        playlist = playlist,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(AppTheme.dimens.spacing100)
+                    )
+                }
+                item {
+                    if (isLoading) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .size(AppTheme.dimens.spacing20)
+                            )
+                        }
                     }
                 }
             }

@@ -33,6 +33,7 @@ fun PlaylistsScreen(
 ) {
     val playlists by viewModel.playlistsForDisplay.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val isFirstLoading by viewModel.isFirstLoading.collectAsStateWithLifecycle()
     val lazyListState: LazyListState = rememberLazyListState()
 
     LaunchedEffect(lazyListState.firstVisibleItemIndex) {
@@ -67,6 +68,7 @@ fun PlaylistsScreen(
             lazyListState = lazyListState,
             playlists = playlists,
             isLoading = isLoading,
+            isFirstLoading = isFirstLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)

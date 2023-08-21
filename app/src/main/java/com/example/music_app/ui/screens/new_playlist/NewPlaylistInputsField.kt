@@ -12,7 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,17 +20,16 @@ import androidx.compose.ui.res.stringResource
 import com.example.music_app.R
 import com.example.music_app.ui.theme.AppTheme
 
-private const val MAX_NAME_SIZE = 20
-private const val MAX_DESCRIPTION_SIZE = 300
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewPlaylistInputsField(
-    nameFieldState: MutableState<String>,
-    descriptionFieldState: MutableState<String>,
-    isNameValid: MutableState<Boolean>,
-    isNameFieldActive: MutableState<Boolean>,
-    modifier: Modifier = Modifier
+    nameFieldState: String,
+    descriptionFieldState: String,
+    isNameValid: Boolean,
+    isNameFieldActive: Boolean,
+    modifier: Modifier = Modifier,
+    onNameValueChange: (String) -> Unit,
+    onDescriptionValueChange: (String) -> Unit
 ) {
     Column(
         horizontalAlignment = CenterHorizontally,
@@ -46,15 +44,11 @@ fun NewPlaylistInputsField(
         )
         Spacer(modifier = Modifier.height(AppTheme.dimens.spacing10))
         OutlinedTextField(
-            value = nameFieldState.value,
-            onValueChange = { newValue ->
-                if (MAX_NAME_SIZE >= newValue.length) nameFieldState.value = newValue
-                isNameValid.value = newValue.isNotBlank()
-                isNameFieldActive.value = true
-            },
-            isError = !isNameValid.value && isNameFieldActive.value,
+            value = nameFieldState,
+            onValueChange = onNameValueChange,
+            isError = !isNameValid && isNameFieldActive,
             placeholder = {
-                if (!isNameFieldActive.value) {
+                if (!isNameFieldActive) {
                     Text(stringResource(R.string.name_field))
                 } else {
                     Text(stringResource(R.string.empty_field_error), color = Color.Red)
@@ -74,11 +68,8 @@ fun NewPlaylistInputsField(
         )
         Spacer(modifier = Modifier.height(AppTheme.dimens.spacing10))
         OutlinedTextField(
-            value = descriptionFieldState.value,
-            onValueChange = { newValue ->
-                if (MAX_DESCRIPTION_SIZE >= newValue.length) descriptionFieldState.value =
-                    newValue
-            },
+            value = descriptionFieldState,
+            onValueChange = onDescriptionValueChange,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
