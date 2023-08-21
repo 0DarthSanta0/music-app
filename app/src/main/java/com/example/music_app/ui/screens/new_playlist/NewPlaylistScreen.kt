@@ -31,6 +31,7 @@ fun NewPlaylistScreen(
     val nameFieldState by viewModel.nameFieldState.collectAsStateWithLifecycle()
     val descriptionFieldState by viewModel.descriptionFieldState.collectAsStateWithLifecycle()
     val isNameValid by viewModel.isNameValid.collectAsStateWithLifecycle()
+    val isFormValid by viewModel.isFormValid.collectAsStateWithLifecycle()
     val isNameFieldActive by viewModel.isNameFieldActive.collectAsStateWithLifecycle()
 
     Column(
@@ -67,7 +68,8 @@ fun NewPlaylistScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(AppTheme.dimens.spacing80)
+                .height(AppTheme.dimens.spacing80),
+            isEnabled = isFormValid
         )
     }
 }

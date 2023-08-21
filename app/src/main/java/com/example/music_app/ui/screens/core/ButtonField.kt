@@ -19,7 +19,8 @@ import com.example.music_app.ui.theme.AppTheme
 fun ButtonField(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -30,6 +31,7 @@ fun ButtonField(
     ) {
         Button(
             onClick = onClick,
+            enabled = isEnabled,
             modifier = Modifier
                 .width(AppTheme.dimens.spacing170)
                 .height(AppTheme.dimens.spacing40)

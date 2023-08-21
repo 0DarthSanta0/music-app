@@ -28,6 +28,8 @@ class NewPlaylistViewModel(
     val descriptionFieldState: StateFlow<String> get() = _descriptionFieldState
     private val _isNameValid: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isNameValid: StateFlow<Boolean> get() = _isNameValid
+    private val _isFormValid: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isFormValid: StateFlow<Boolean> get() = _isFormValid
     private val _isNameFieldActive: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isNameFieldActive: StateFlow<Boolean> get() = _isNameFieldActive
 
@@ -49,20 +51,19 @@ class NewPlaylistViewModel(
     }
 
     fun onCreatePlaylist(onCreatePlaylistSuccess: () -> Unit) {
-        if (_isNameValid.value) {
+            _isFormValid.value = false
             createPlaylist(
                 name = nameFieldState.value,
                 description = descriptionFieldState.value.ifEmpty { null },
                 onCreatePlaylistSuccess = onCreatePlaylistSuccess
             )
-        } else {
-            _isNameFieldActive.value = true
-        }
     }
 
     fun onNameValueChange(newValue: String) {
         if (MAX_NAME_SIZE >= newValue.length) _nameFieldState.value = newValue
-        _isNameValid.value = newValue.isNotBlank()
+        val isNotBlank = newValue.isNotBlank()
+        _isNameValid.value = isNotBlank
+        _isFormValid.value = isNotBlank
         _isNameFieldActive.value = true
     }
 
