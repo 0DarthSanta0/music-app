@@ -49,7 +49,7 @@ class PlaylistsViewModel(
     }
 
     fun isScrollOnEnd(firstVisibleItemIndex: Int) {
-        if (firstVisibleItemIndex == (offset - 5) && (totalSize - offset) > 0) {
+        if (firstVisibleItemIndex == (offset - 6) && (totalSize - offset) > 0) {
             _isLoading.value = true
             _isFirstLoading.value = false
             requestPlaylists()

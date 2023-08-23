@@ -42,7 +42,7 @@ class PlaylistsRepositoryImpl(
     override suspend fun createPlaylist(
         name: String,
         description: String?
-    ): Flow<Result<Boolean, AppErrors>> = flow {
+    ): Flow<Result<Unit, AppErrors>> = flow {
         catchErrors {
             val userIdResponse = dataStoreManager.getString(USER_ID_KEY)
             if (userIdResponse.isEmpty()) emit(Err(AppErrors.EmptyUserID))
@@ -54,7 +54,7 @@ class PlaylistsRepositoryImpl(
                 )
             )
             emit(
-                if (postResponse.name != null) Ok(true) else Err(AppErrors.ResponseError)
+                if (postResponse.name != null) Ok(Unit) else Err(AppErrors.ResponseError)
             )
         }
     }

@@ -5,11 +5,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.music_app.AppErrors
 import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.CreatePlaylistUseCase
-import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,7 +40,7 @@ class NewPlaylistViewModel(
             createPlaylistUseCase(
                 name = name,
                 description = description
-            ).collect { createPlaylist: Result<Boolean, AppErrors> ->
+            ).collect { createPlaylist ->
                 createPlaylist.onSuccess {
                     onCreatePlaylistSuccess()
                 }
@@ -51,12 +49,12 @@ class NewPlaylistViewModel(
     }
 
     fun onCreatePlaylist(onCreatePlaylistSuccess: () -> Unit) {
-            _isFormValid.value = false
-            createPlaylist(
-                name = nameFieldState.value,
-                description = descriptionFieldState.value.ifEmpty { null },
-                onCreatePlaylistSuccess = onCreatePlaylistSuccess
-            )
+        _isFormValid.value = false
+        createPlaylist(
+            name = nameFieldState.value,
+            description = descriptionFieldState.value.ifEmpty { null },
+            onCreatePlaylistSuccess = onCreatePlaylistSuccess
+        )
     }
 
     fun onNameValueChange(newValue: String) {

@@ -56,14 +56,6 @@ fun PlaylistsScreen(
                 .height(AppTheme.dimens.spacing80)
         ) {
         }
-        Surface(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            shape = RoundedCornerShape(AppTheme.dimens.spacing08),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(AppTheme.dimens.spacing80)
-        ) {
-        }
         PlaylistsField(
             lazyListState = lazyListState,
             playlists = playlists,

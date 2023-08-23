@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -42,14 +40,6 @@ fun NewPlaylistScreen(
         verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
         horizontalAlignment = CenterHorizontally
     ) {
-        Surface(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            shape = RoundedCornerShape(AppTheme.dimens.spacing08),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(AppTheme.dimens.spacing80)
-        ) {
-        }
         NewPlaylistInputsField(
             nameFieldState = nameFieldState,
             descriptionFieldState = descriptionFieldState,

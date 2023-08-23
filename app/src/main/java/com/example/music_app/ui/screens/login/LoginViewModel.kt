@@ -11,6 +11,7 @@ import com.example.music_app.data.repositories.login.LoginRepositoryImpl
 import com.example.music_app.data.repositories.user.UserRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestTokenUseCase
 import com.example.music_app.domain.use_cases.RequestUserIdUseCase
+import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.launch
 
 class LoginViewModel(
@@ -22,7 +23,7 @@ class LoginViewModel(
             viewModelScope.launch {
                 requestTokenUseCase(code)
                     .collect { token ->
-                        if (token.component1() != null) {
+                        token.onSuccess {
                             requestUserIdUseCase()
                             onLoginSuccess()
                         }

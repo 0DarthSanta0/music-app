@@ -11,7 +11,7 @@ class CreatePlaylistUseCase(
     suspend operator fun invoke(
         name: String,
         description: String?
-    ): Flow<Result<Boolean, AppErrors>> =
+    ): Flow<Result<Unit, AppErrors>> =
         playlistsRepository.createPlaylist(
             name = name,
             description = description

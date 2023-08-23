@@ -6,6 +6,12 @@ import com.github.michaelbull.result.Result
 import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsRepository {
-    suspend fun createPlaylist(name: String, description: String?): Flow<Result<Boolean, AppErrors>>
-    suspend fun requestListOfPlaylists(offset: Int, limit: Int): Flow<Result<ListOfPlaylists, AppErrors>>
+    suspend fun createPlaylist(
+        name: String,
+        description: String?
+    ): Flow<Result<Unit, AppErrors>>
+    suspend fun requestListOfPlaylists(
+        offset: Int,
+        limit: Int
+    ): Flow<Result<ListOfPlaylists, AppErrors>>
 }
