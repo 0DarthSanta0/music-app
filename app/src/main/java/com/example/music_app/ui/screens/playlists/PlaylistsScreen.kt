@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,17 +35,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
+import com.example.music_app.ui.screens.core.ButtonField
 import com.example.music_app.ui.theme.AppTheme
 
 @SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 fun PlaylistsScreen(
     viewModel: PlaylistsViewModel = viewModel(factory = PlaylistsViewModel.Factory),
-    onSearch: () -> Unit,
+    onAddNewPlaylist: () -> Unit,
+    onSearch: () -> Unit
 ) {
-
     val playlists by viewModel.playlistsForDisplay.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val isFirstLoading by viewModel.isFirstLoading.collectAsStateWithLifecycle()
     val lazyListState: LazyListState = rememberLazyListState()
 
     LaunchedEffect(lazyListState.firstVisibleItemIndex) {
@@ -88,27 +91,17 @@ fun PlaylistsScreen(
             lazyListState = lazyListState,
             playlists = playlists,
             isLoading = isLoading,
+            isFirstLoading = isFirstLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
         )
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = CenterHorizontally,
+        ButtonField(
+            text = stringResource(R.string.new_playlist),
+            onClick = { onAddNewPlaylist() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(AppTheme.dimens.spacing80)
-                .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
-                .background(MaterialTheme.colorScheme.primaryContainer)
-        ) {
-            Button(
-                onClick = { },
-                modifier = Modifier
-                    .width(AppTheme.dimens.spacing170)
-                    .height(AppTheme.dimens.spacing40)
-            ) {
-                Text(text = stringResource(R.string.new_playlist))
-            }
-        }
+        )
     }
 }

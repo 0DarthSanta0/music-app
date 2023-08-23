@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
@@ -26,6 +27,8 @@ class PlaylistsViewModel(
     val playlistsForDisplay: StateFlow<List<Playlist>> get() = _playlistsForDisplay
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> get() = _isLoading
+    private val _isFirstLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val isFirstLoading: StateFlow<Boolean> get() = _isFirstLoading
 
     init {
         requestPlaylists()
@@ -46,18 +49,22 @@ class PlaylistsViewModel(
     }
 
     fun isScrollOnEnd(firstVisibleItemIndex: Int) {
-        if (firstVisibleItemIndex == (offset - 5) && (totalSize - offset) > 0) {
+        if (firstVisibleItemIndex == (offset - 6) && (totalSize - offset) > 0) {
             _isLoading.value = true
+            _isFirstLoading.value = false
             requestPlaylists()
         }
     }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
-            val playlistsRepository = PlaylistsRepositoryImpl()
             initializer {
                 PlaylistsViewModel(
-                    requestPlaylistsUseCase = RequestPlaylistsUseCase(playlistsRepository = playlistsRepository)
+                    requestPlaylistsUseCase = RequestPlaylistsUseCase(
+                        playlistsRepository = PlaylistsRepositoryImpl(
+                            DataStoreManagerImpl
+                        )
+                    )
                 )
             }
         }

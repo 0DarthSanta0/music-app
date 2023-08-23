@@ -20,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import coil.compose.AsyncImage
@@ -33,7 +32,6 @@ fun PlaylistItem(
     playlist: Playlist,
     modifier: Modifier = Modifier,
 ) {
-
     var isLoading by remember { mutableStateOf(true) }
 
     Row(
@@ -62,7 +60,7 @@ fun PlaylistItem(
             )
             if (isLoading) {
                 CircularProgressIndicator(
-                    color = Color.Blue,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -73,14 +71,12 @@ fun PlaylistItem(
             Text(
                 style = MaterialTheme.typography.titleLarge,
                 text = playlist.name,
-                color = MaterialTheme.colorScheme.background,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(AppTheme.dimens.spacing05))
             Text(
                 text = playlist.description,
-                color = MaterialTheme.colorScheme.background,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
