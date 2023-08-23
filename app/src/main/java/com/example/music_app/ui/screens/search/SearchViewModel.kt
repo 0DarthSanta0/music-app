@@ -9,7 +9,6 @@ import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsForSearchUseCase
 import com.github.michaelbull.result.onSuccess
-import com.google.android.material.color.utilities.PointProviderLab
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,50 +16,85 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.descriptors.StructureKind
 
+private const val LIMIT = 10
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
     private val searchUseCase: RequestPlaylistsForSearchUseCase
 ) : ViewModel() {
 
+    private var totalSize = 0
+    private var globalOffset = 0
+
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
-
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
-
     private val _playlists = MutableStateFlow(listOf<Playlist>())
-    val playlists: StateFlow<List<Playlist>> = searchText
+    val playlists: StateFlow<List<Playlist>> = _searchText
         .debounce(500L)
-        .onEach { _isSearching.update { true } }
-        .combine(_playlists) { text, playlistsState ->
+        .combine(_playlists) { text, _ ->
             if (text.isBlank() || text.length == 1) {
                 emptyList()
             } else {
-                viewModelScope.launch {
-                    val repoResult = searchUseCase(offset = 0, limit = 10, prefix = text)
-                    repoResult.collect {playlists ->
-                        playlists.onSuccess { _playlists.value = it.playlists }
-                    }
-                }
+                _isSearching.value = true
+                requestPlaylistsForSearch(
+                    text = text,
+                    isGetMorePlaylistsCase = false
+                )
                 _playlists.value
             }
         }
-        .onEach { _isSearching.update { false } }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             _playlists.value
         )
 
+    private fun requestPlaylistsForSearch(
+        text: String,
+        isGetMorePlaylistsCase: Boolean,
+        offset: Int = 0
+    ) = viewModelScope.launch {
+        val playlistsResponseFlow = searchUseCase(
+            offset = offset,
+            limit = LIMIT,
+            prefix = text
+        )
+        playlistsResponseFlow.collect { playlistsResponse ->
+            playlistsResponse.onSuccess { playlists ->
+                if (isGetMorePlaylistsCase) {
+                    _playlists.value += playlists.playlists
+                    globalOffset += LIMIT
+                    _isLoading.value = false
+                } else {
+                    _playlists.value = playlists.playlists
+                    totalSize = playlists.totalSize
+                    globalOffset = LIMIT
+                    _isSearching.value = false
+                }
+            }
+        }
+    }
+
     fun onSearchTextChange(text: String) {
         _searchText.value = text
+    }
+
+    fun isScrollOnEnd(firstVisibleItemIndex: Int) {
+        if (firstVisibleItemIndex == (globalOffset - 5) && (totalSize - globalOffset) > 0) {
+            _isLoading.value = true
+            requestPlaylistsForSearch(
+                text = _searchText.value,
+                offset = globalOffset,
+                isGetMorePlaylistsCase = true,
+            )
+        }
     }
 
     companion object {
