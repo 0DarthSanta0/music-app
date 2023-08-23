@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.ui.theme.AppTheme
 
@@ -26,6 +25,7 @@ fun PlaylistsField(
     lazyListState: LazyListState,
     playlists: List<Playlist>,
     isLoading: Boolean,
+    isFirstLoading: Boolean,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -34,9 +34,9 @@ fun PlaylistsField(
             .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
             .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
-        if (isLoading) {
+        if (isLoading && isFirstLoading) {
             CircularProgressIndicator(
-                color = Color.Blue,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(AppTheme.dimens.spacing80)
             )
@@ -58,6 +58,20 @@ fun PlaylistsField(
                             .fillMaxWidth()
                             .height(AppTheme.dimens.spacing100)
                     )
+                }
+                item {
+                    if (isLoading) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .size(AppTheme.dimens.spacing20)
+                            )
+                        }
+                    }
                 }
             }
         }
