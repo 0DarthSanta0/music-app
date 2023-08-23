@@ -44,6 +44,5 @@ interface AuthService {
                 .build()
                 .create(AuthService::class.java)
         }
-
     }
 }

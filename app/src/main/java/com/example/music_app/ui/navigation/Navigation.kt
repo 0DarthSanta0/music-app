@@ -27,8 +27,7 @@ fun Navigation(startScreen: Screens?) {
                 navController.navigate(Screens.NewPlaylistScreen.route)
             }, onSearch = {
                 navController.navigate(Screens.SearchScreen.route)
-            }
-            )
+            })
         }
         composable(route = Screens.SearchScreen.route) {
             SearchScreen()

@@ -18,11 +18,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -91,7 +88,7 @@ fun PlaylistsScreen(
             lazyListState = lazyListState,
             playlists = playlists,
             isLoading = isLoading,
-            isFirstLoading = isFirstLoading,
+            isFirstLoading = isLoading && isFirstLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)

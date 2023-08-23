@@ -5,18 +5,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsForSearchUseCase
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 private const val LIMIT = 10
@@ -29,32 +26,14 @@ class SearchViewModel(
     private var totalSize = 0
     private var globalOffset = 0
 
-    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
     private val _searchText = MutableStateFlow("")
     val searchText = _searchText.asStateFlow()
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
     private val _playlists = MutableStateFlow(listOf<Playlist>())
-    val playlists: StateFlow<List<Playlist>> = _searchText
-        .debounce(500L)
-        .combine(_playlists) { text, _ ->
-            if (text.isBlank() || text.length == 1) {
-                emptyList()
-            } else {
-                _isSearching.value = true
-                requestPlaylistsForSearch(
-                    text = text,
-                    isGetMorePlaylistsCase = false
-                )
-                _playlists.value
-            }
-        }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            _playlists.value
-        )
+    val playlists: StateFlow<List<Playlist>> = _playlists.asStateFlow()
 
     private fun requestPlaylistsForSearch(
         text: String,
@@ -84,10 +63,19 @@ class SearchViewModel(
 
     fun onSearchTextChange(text: String) {
         _searchText.value = text
+        if (text.isBlank() || text.length == 1) {
+            _playlists.value = emptyList()
+        } else {
+            _isSearching.value = true
+            requestPlaylistsForSearch(
+                text = text,
+                isGetMorePlaylistsCase = false
+            )
+        }
     }
 
     fun isScrollOnEnd(firstVisibleItemIndex: Int) {
-        if (firstVisibleItemIndex == (globalOffset - 5) && (totalSize - globalOffset) > 0) {
+        if (firstVisibleItemIndex == (globalOffset - 6) && (totalSize - globalOffset) > 0) {
             _isLoading.value = true
             requestPlaylistsForSearch(
                 text = _searchText.value,
@@ -101,7 +89,11 @@ class SearchViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 SearchViewModel(
-                    searchUseCase = RequestPlaylistsForSearchUseCase(playlistsRepository = PlaylistsRepositoryImpl())
+                    searchUseCase = RequestPlaylistsForSearchUseCase(
+                        playlistsRepository = PlaylistsRepositoryImpl(
+                            DataStoreManagerImpl
+                        )
+                    )
                 )
             }
         }
