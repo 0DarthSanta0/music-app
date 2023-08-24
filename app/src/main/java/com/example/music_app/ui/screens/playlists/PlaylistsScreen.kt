@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -28,7 +27,6 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
@@ -72,15 +70,18 @@ fun PlaylistsScreen(
                 modifier = Modifier
                     .width(AppTheme.dimens.spacing40)
                     .height(AppTheme.dimens.spacing40)
-                    .clickable {
-                        onSearch()
-                    }
+                    .padding(AppTheme.dimens.spacing05)
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
-                        .size(40.dp)
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
+                        .clickable {
+                            onSearch()
+                        }
                 )
             }
         }

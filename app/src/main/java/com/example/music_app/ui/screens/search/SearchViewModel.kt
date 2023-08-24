@@ -12,8 +12,12 @@ import com.example.music_app.domain.use_cases.RequestPlaylistsForSearchUseCase
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 private const val LIMIT = 10
@@ -25,6 +29,7 @@ class SearchViewModel(
 
     private var totalSize = 0
     private var globalOffset = 0
+    private var currentText = ""
 
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -33,7 +38,28 @@ class SearchViewModel(
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
     private val _playlists = MutableStateFlow(listOf<Playlist>())
-    val playlists: StateFlow<List<Playlist>> = _playlists.asStateFlow()
+    val playlists: StateFlow<List<Playlist>> = searchText
+        .debounce(300L)
+        .combine(_playlists) { text, _ ->
+            when {
+                text.isBlank() || text.length == 1 -> emptyList()
+                text == currentText -> _playlists.value
+                else -> {
+                    currentText = text
+                    _isSearching.value = true
+                    requestPlaylistsForSearch(
+                        text = text,
+                        isGetMorePlaylistsCase = false
+                    ).join()
+                    _playlists.value
+                }
+            }
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            _playlists.value
+        )
 
     private fun requestPlaylistsForSearch(
         text: String,
@@ -63,15 +89,6 @@ class SearchViewModel(
 
     fun onSearchTextChange(text: String) {
         _searchText.value = text
-        if (text.isBlank() || text.length == 1) {
-            _playlists.value = emptyList()
-        } else {
-            _isSearching.value = true
-            requestPlaylistsForSearch(
-                text = text,
-                isGetMorePlaylistsCase = false
-            )
-        }
     }
 
     fun isScrollOnEnd(firstVisibleItemIndex: Int) {
