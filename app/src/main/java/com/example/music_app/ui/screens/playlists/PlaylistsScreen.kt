@@ -1,23 +1,29 @@
 package com.example.music_app.ui.screens.playlists
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,13 +54,22 @@ fun PlaylistsScreen(
         verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
         horizontalAlignment = CenterHorizontally
     ) {
-        Surface(
-            color = MaterialTheme.colorScheme.primaryContainer,
-            shape = RoundedCornerShape(AppTheme.dimens.spacing08),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(AppTheme.dimens.spacing80)
+                .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
+            val vectorPainter: Painter = painterResource(id = R.drawable.logo)
+            Image(
+                painter = vectorPainter,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(AppTheme.dimens.spacing60)
+            )
         }
         PlaylistsField(
             lazyListState = lazyListState,
