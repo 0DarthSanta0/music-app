@@ -7,11 +7,12 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.music_app.ui.navigation.Navigation
+import com.example.music_app.ui.screens.core.ErrorMessage
 import com.example.music_app.ui.theme.MusicAppTheme
 
 
@@ -23,16 +24,24 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { viewModel.isSplashScreenVisible.value }
         setContent {
-            val screen by viewModel.route.collectAsState()
+            val screen by viewModel.route.collectAsStateWithLifecycle()
+            val error by viewModel.error.collectAsStateWithLifecycle()
             MusicAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation(screen)
+                    if (error == null) {
+                        Navigation(screen)
+                    } else {
+                        ErrorMessage(
+                            errorId = error?.errorId ?: 0,
+                            onClick = { viewModel.checkStatus() },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
             }
         }
     }
 }
-

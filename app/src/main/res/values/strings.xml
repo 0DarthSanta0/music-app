@@ -9,4 +9,11 @@
     <string name="description_field">Enter playlist description</string>
     <string name="empty_field_error">This field cannot be empty</string>
     <string name="new_playlist">Add new playlist</string>
+
+    <string name="OK">OK</string>
+    <string name="receiving_time_error">Empty receiving time</string>
+    <string name="user_id_error">Empty user id</string>
+    <string name="time_interval_error">Wrong time interval</string>
+    <string name="data_base_error">Data base error</string>
+    <string name="response_error">Response error</string>
 </resources>
