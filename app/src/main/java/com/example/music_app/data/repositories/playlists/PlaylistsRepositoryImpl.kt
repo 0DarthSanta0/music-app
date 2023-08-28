@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 private const val USER_ID_KEY = "user_id"
-private const val TYPE = "playlist"
 
 class PlaylistsRepositoryImpl(
     private val dataStoreManager: DataStoreManager,
@@ -63,16 +62,18 @@ class PlaylistsRepositoryImpl(
     override suspend fun requestPlaylistsForSearch(
         offset: Int,
         limit: Int,
-        prefix: String
+        prefix: String,
+        type: String
     ): Flow<Result<ListOfPlaylists, AppErrors>> = flow {
         val playlistsForSearchResponse = spotifyAPI.getPlaylistsForSearch(
-            q = prefix,
-            type = TYPE,
-            offset = offset.toString(),
-            limit = limit.toString()
+            prefix = prefix,
+            type = type,
+            offset = offset,
+            limit = limit
         )
-        val totalSize = playlistsForSearchResponse.playlists.total
-        val playlists = playlistsForSearchResponse.playlists.items?.map(PlaylistItemResponse::toPlaylist)
+        val (totalSize, playlists) = playlistsForSearchResponse.playlists.let { response ->
+            response.total to response.items?.map(PlaylistItemResponse::toPlaylist)
+        }
         emit(
             if (playlists != null && totalSize != null) {
                 Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))

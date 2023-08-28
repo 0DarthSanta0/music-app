@@ -1,10 +1,8 @@
 package com.example.music_app.ui.screens.playlists
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +19,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -33,7 +33,6 @@ import com.example.music_app.R
 import com.example.music_app.ui.screens.core.ButtonField
 import com.example.music_app.ui.theme.AppTheme
 
-@SuppressLint("FrequentlyChangedStateReadInComposition")
 @Composable
 fun PlaylistsScreen(
     viewModel: PlaylistsViewModel = viewModel(factory = PlaylistsViewModel.Factory),
@@ -45,8 +44,14 @@ fun PlaylistsScreen(
     val isFirstLoading by viewModel.isFirstLoading.collectAsStateWithLifecycle()
     val lazyListState: LazyListState = rememberLazyListState()
 
-    LaunchedEffect(lazyListState.firstVisibleItemIndex) {
-        viewModel.isScrollOnEnd(lazyListState.firstVisibleItemIndex)
+    val index by remember {
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex
+        }
+    }
+
+    LaunchedEffect(index) {
+        viewModel.onScrollIndexChange(index)
     }
 
     Column(
@@ -66,24 +71,19 @@ fun PlaylistsScreen(
                 .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
                 .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            Box(
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .width(AppTheme.dimens.spacing40)
                     .height(AppTheme.dimens.spacing40)
                     .padding(AppTheme.dimens.spacing05)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
-                        .clickable {
-                            onSearch()
-                        }
-                )
-            }
+                    .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
+                    .clickable {
+                        onSearch()
+                    }
+            )
         }
         PlaylistsField(
             lazyListState = lazyListState,

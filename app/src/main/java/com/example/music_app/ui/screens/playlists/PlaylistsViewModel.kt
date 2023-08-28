@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 private const val LIMIT = 10
+private const val INDEX = 6
 
 class PlaylistsViewModel(
     private val requestPlaylistsUseCase: RequestPlaylistsUseCase
@@ -48,8 +49,8 @@ class PlaylistsViewModel(
         }
     }
 
-    fun isScrollOnEnd(firstVisibleItemIndex: Int) {
-        if (firstVisibleItemIndex == (offset - 6) && (totalSize - offset) > 0) {
+    fun onScrollIndexChange(firstVisibleItemIndex: Int) {
+        if (firstVisibleItemIndex == (offset - INDEX) && (totalSize - offset) > 0) {
             _isLoading.value = true
             _isFirstLoading.value = false
             requestPlaylists()

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 private const val LIMIT = 10
+private const val INDEX = 6
 
 @OptIn(FlowPreview::class)
 class SearchViewModel(
@@ -91,8 +92,8 @@ class SearchViewModel(
         _searchText.value = text
     }
 
-    fun isScrollOnEnd(firstVisibleItemIndex: Int) {
-        if (firstVisibleItemIndex == (globalOffset - 6) && (totalSize - globalOffset) > 0) {
+    fun onScrollIndexChange(firstVisibleItemIndex: Int) {
+        if (firstVisibleItemIndex == (globalOffset - INDEX) && (totalSize - globalOffset) > 0) {
             _isLoading.value = true
             requestPlaylistsForSearch(
                 text = _searchText.value,

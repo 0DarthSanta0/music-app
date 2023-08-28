@@ -51,10 +51,10 @@ interface PlaylistsService {
 
     @GET(GET_SEARCH_URL)
     suspend fun getPlaylistsForSearch(
-        @Query(Q) q: String,
+        @Query(Q) prefix: String,
         @Query(TYPE) type: String,
-        @Query(OFFSET) offset: String,
-        @Query(LIMIT) limit: String
+        @Query(OFFSET) offset: Int,
+        @Query(LIMIT) limit: Int
     ): SearchPlaylistsResponse
 
     companion object PlaylistsHelper {

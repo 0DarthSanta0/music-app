@@ -5,6 +5,8 @@ import com.example.music_app.data.models.ListOfPlaylists
 import com.github.michaelbull.result.Result
 import kotlinx.coroutines.flow.Flow
 
+private const val TYPE = "playlist"
+
 interface PlaylistsRepository {
     suspend fun createPlaylist(
         name: String,
@@ -17,6 +19,7 @@ interface PlaylistsRepository {
     suspend fun requestPlaylistsForSearch(
         offset: Int,
         limit: Int,
-        prefix: String
+        prefix: String,
+        type: String = TYPE
     ): Flow<Result<ListOfPlaylists ,AppErrors>>
 }
