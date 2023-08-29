@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.music_app.AppErrors
 import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsUseCase
+import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +31,8 @@ class PlaylistsViewModel(
     val isLoading: StateFlow<Boolean> get() = _isLoading
     private val _isFirstLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
     val isFirstLoading: StateFlow<Boolean> get() = _isFirstLoading
+    private val _error: MutableStateFlow<AppErrors?> = MutableStateFlow(null)
+    val error: StateFlow<AppErrors?> get() = _error
 
     init {
         requestPlaylists()
@@ -43,6 +47,8 @@ class PlaylistsViewModel(
                     totalSize = listOfPlaylists.totalSize
                     offset += LIMIT
                     _isLoading.value = false
+                }.onFailure { requestError ->
+                    _error.value = requestError
                 }
             }
         }
@@ -54,6 +60,11 @@ class PlaylistsViewModel(
             _isFirstLoading.value = false
             requestPlaylists()
         }
+    }
+
+    fun onError() {
+        _error.value = null
+        requestPlaylists()
     }
 
     companion object {

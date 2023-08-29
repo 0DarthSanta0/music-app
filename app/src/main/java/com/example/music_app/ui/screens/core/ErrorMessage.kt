@@ -29,7 +29,7 @@ fun ErrorMessage(
         Button(
             onClick = { onClick() }
         ) {
-            Text(stringResource(id = R.string.OK))
+            Text(stringResource(id = R.string.ok))
         }
     }
 }

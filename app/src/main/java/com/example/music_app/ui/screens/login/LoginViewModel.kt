@@ -34,7 +34,9 @@ class LoginViewModel(
                 requestTokenUseCase(code)
                     .collect { token ->
                         token.onSuccess {
-                            requestUserIdUseCase()
+                            requestUserIdUseCase().onFailure { idResponseError ->
+                                _error.value = idResponseError
+                            }
                             onLoginSuccess()
                         }.onFailure {tokenResponseError ->
                             _error.value = tokenResponseError
