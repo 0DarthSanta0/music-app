@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,10 +18,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -31,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
 import com.example.music_app.ui.screens.core.ButtonField
+import com.example.music_app.ui.screens.core.ScrollIndexChange
 import com.example.music_app.ui.theme.AppTheme
 
 @Composable
@@ -44,15 +42,10 @@ fun PlaylistsScreen(
     val isFirstLoading by viewModel.isFirstLoading.collectAsStateWithLifecycle()
     val lazyListState: LazyListState = rememberLazyListState()
 
-    val index by remember {
-        derivedStateOf {
-            lazyListState.firstVisibleItemIndex
-        }
-    }
-
-    LaunchedEffect(index) {
-        viewModel.onScrollIndexChange(index)
-    }
+    ScrollIndexChange(
+        lazyListState = lazyListState,
+        onScrollIndexChange = viewModel::onScrollIndexChange
+    )
 
     Column(
         modifier = Modifier
@@ -76,8 +69,7 @@ fun PlaylistsScreen(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .width(AppTheme.dimens.spacing40)
-                    .height(AppTheme.dimens.spacing40)
+                    .size(AppTheme.dimens.spacing40)
                     .padding(AppTheme.dimens.spacing05)
                     .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
                     .clickable {

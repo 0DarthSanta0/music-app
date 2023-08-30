@@ -71,8 +71,8 @@ class PlaylistsRepositoryImpl(
             offset = offset,
             limit = limit
         )
-        val (totalSize, playlists) = playlistsForSearchResponse.playlists.let { response ->
-            response.total to response.items?.map(PlaylistItemResponse::toPlaylist)
+        val (totalSize, playlists) = with(playlistsForSearchResponse.playlists) {
+            total to items?.map(PlaylistItemResponse::toPlaylist)
         }
         emit(
             if (playlists != null && totalSize != null) {

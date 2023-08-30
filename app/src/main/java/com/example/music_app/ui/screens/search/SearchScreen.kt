@@ -17,10 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
 import com.example.music_app.ui.screens.core.ButtonField
+import com.example.music_app.ui.screens.core.ScrollIndexChange
 import com.example.music_app.ui.screens.playlists.PlaylistsField
 import com.example.music_app.ui.theme.AppTheme
 
@@ -45,15 +43,10 @@ fun SearchScreen(
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
 
-    val index by remember {
-        derivedStateOf {
-            lazyListState.firstVisibleItemIndex
-        }
-    }
-
-    LaunchedEffect(index) {
-        viewModel.onScrollIndexChange(index)
-    }
+    ScrollIndexChange(
+        lazyListState = lazyListState,
+        onScrollIndexChange = viewModel::onScrollIndexChange
+    )
 
     Column(
         modifier = Modifier
