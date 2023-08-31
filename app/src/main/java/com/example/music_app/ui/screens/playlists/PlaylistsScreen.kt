@@ -17,9 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -27,19 +26,11 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +44,6 @@ import com.example.music_app.ui.screens.core.ScrollIndexChange
 import com.example.music_app.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("FrequentlyChangedStateReadInComposition", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun PlaylistsScreen(
     viewModel: PlaylistsViewModel = viewModel(factory = PlaylistsViewModel.Factory),
@@ -100,58 +90,60 @@ fun PlaylistsScreen(
                 }
             }
         },
-    ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(AppTheme.dimens.spacing10),
-        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
-        horizontalAlignment = CenterHorizontally
-    ) {
-        Box(
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(AppTheme.dimens.spacing80)
-                .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(paddingValues)
+                .padding(AppTheme.dimens.spacing10),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
+            horizontalAlignment = CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
+            Box(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(AppTheme.dimens.spacing60)
+                    .fillMaxWidth()
+                    .height(AppTheme.dimens.spacing80)
+                    .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(AppTheme.dimens.spacing60)
+                )
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .size(AppTheme.dimens.spacing40)
+                        .padding(AppTheme.dimens.spacing05)
+                        .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
+                        .clickable {
+                            onSearch()
+                        }
+                )
+            }
+            PlaylistsField(
+                lazyListState = lazyListState,
+                playlists = playlists,
+                isLoading = isLoading,
+                isFirstLoading = isLoading && isFirstLoading,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
             )
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+            ButtonField(
+                text = stringResource(R.string.new_playlist),
+                onClick = { onAddNewPlaylist() },
                 modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(AppTheme.dimens.spacing40)
-                    .padding(AppTheme.dimens.spacing05)
-                    .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
-                    .clickable {
-                        onSearch()
-                    }
+                    .fillMaxWidth()
+                    .height(AppTheme.dimens.spacing80)
             )
         }
-        PlaylistsField(
-            lazyListState = lazyListState,
-            playlists = playlists,
-            isLoading = isLoading,
-            isFirstLoading = isLoading && isFirstLoading,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        )
-        ButtonField(
-            text = stringResource(R.string.new_playlist),
-            onClick = { onAddNewPlaylist() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(AppTheme.dimens.spacing80)
-        )
-    }}
+    }
 }
