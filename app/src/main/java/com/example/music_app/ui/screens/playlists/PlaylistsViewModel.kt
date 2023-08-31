@@ -12,12 +12,14 @@ import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsUseCase
 import com.github.michaelbull.result.onFailure
+import com.example.music_app.ui.screens.core.onScrollIndexChange
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 private const val LIMIT = 10
+private const val INDEX = 6
 
 class PlaylistsViewModel(
     private val requestPlaylistsUseCase: RequestPlaylistsUseCase
@@ -54,12 +56,18 @@ class PlaylistsViewModel(
         }
     }
 
-    fun isScrollOnEnd(firstVisibleItemIndex: Int) {
-        if (firstVisibleItemIndex == (offset - 6) && (totalSize - offset) > 0) {
-            _isLoading.value = true
-            _isFirstLoading.value = false
-            requestPlaylists()
-        }
+    fun onUIScrollIndexChange(firstVisibleItemIndex: Int) {
+        onScrollIndexChange(
+            firstVisibleItemIndex = firstVisibleItemIndex,
+            offset = offset,
+            index = INDEX,
+            size = totalSize,
+            onSuccessful = {
+                _isLoading.value = true
+                _isFirstLoading.value = false
+                requestPlaylists()
+            }
+        )
     }
 
     fun onError() {

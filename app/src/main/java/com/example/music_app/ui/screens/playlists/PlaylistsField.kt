@@ -34,7 +34,7 @@ fun PlaylistsField(
             .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
             .background(MaterialTheme.colorScheme.primaryContainer)
     ) {
-        if (isLoading && isFirstLoading) {
+        if (isFirstLoading) {
             CircularProgressIndicator(
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
