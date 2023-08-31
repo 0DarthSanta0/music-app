@@ -4,6 +4,7 @@ import com.example.music_app.data.models.CreatePlaylistBody
 import com.example.music_app.data.models.CreatePlaylistResponse
 import com.example.music_app.data.models.CurrentUserResponse
 import com.example.music_app.data.models.PlaylistsResponse
+import com.example.music_app.data.models.SearchPlaylistsResponse
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,12 +16,16 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 private const val USER_ID = "user_id"
+
 private const val OFFSET = "offset"
 private const val LIMIT = "limit"
+private const val Q = "q"
+private const val TYPE = "type"
 
 private const val BASE_URL = "https://api.spotify.com/"
 private const val GET_PLAYLISTS_URL = "v1/me/playlists"
 private const val GET_USER_URL = "v1/me"
+private const val GET_SEARCH_URL = "v1/search"
 private const val POST_PLAYLIST_URL = "v1/users/{${USER_ID}}/playlists"
 
 private const val CONTENT_TYPE_HEADER = "Content-Type: application/json"
@@ -43,6 +48,14 @@ interface PlaylistsService {
         @Path(USER_ID) user: String,
         @Body body: CreatePlaylistBody
     ): CreatePlaylistResponse
+
+    @GET(GET_SEARCH_URL)
+    suspend fun getPlaylistsForSearch(
+        @Query(Q) prefix: String,
+        @Query(TYPE) type: String,
+        @Query(OFFSET) offset: Int,
+        @Query(LIMIT) limit: Int
+    ): SearchPlaylistsResponse
 
     companion object PlaylistsHelper {
         fun getInstance(): PlaylistsService {

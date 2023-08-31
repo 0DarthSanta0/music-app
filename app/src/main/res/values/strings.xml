@@ -9,4 +9,6 @@
     <string name="description_field">Enter playlist description</string>
     <string name="empty_field_error">This field cannot be empty</string>
     <string name="new_playlist">Add new playlist</string>
+    <string name="search">Search</string>
+    <string name="to_playlists">To playlists</string>
 </resources>
