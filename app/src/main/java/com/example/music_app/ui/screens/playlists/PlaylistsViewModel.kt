@@ -10,6 +10,7 @@ import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsUseCase
+import com.example.music_app.ui.screens.core.onScrollIndexChange
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,12 +50,18 @@ class PlaylistsViewModel(
         }
     }
 
-    fun onScrollIndexChange(firstVisibleItemIndex: Int) {
-        if (firstVisibleItemIndex == (offset - INDEX) && (totalSize - offset) > 0) {
-            _isLoading.value = true
-            _isFirstLoading.value = false
-            requestPlaylists()
-        }
+    fun onUIScrollIndexChange(firstVisibleItemIndex: Int) {
+        onScrollIndexChange(
+            firstVisibleItemIndex = firstVisibleItemIndex,
+            offset = offset,
+            index = INDEX,
+            size = totalSize,
+            onSuccessful = {
+                _isLoading.value = true
+                _isFirstLoading.value = false
+                requestPlaylists()
+            }
+        )
     }
 
     companion object {

@@ -9,6 +9,7 @@ import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsForSearchUseCase
+import com.example.music_app.ui.screens.core.onScrollIndexChange
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -92,15 +93,21 @@ class SearchViewModel(
         _searchText.value = text
     }
 
-    fun onScrollIndexChange(firstVisibleItemIndex: Int) {
-        if (firstVisibleItemIndex == (globalOffset - INDEX) && (totalSize - globalOffset) > 0) {
-            _isLoading.value = true
-            requestPlaylistsForSearch(
-                text = _searchText.value,
-                offset = globalOffset,
-                isGetMorePlaylistsCase = true,
-            )
-        }
+    fun onUIScrollIndexChange(firstVisibleItemIndex: Int) {
+        onScrollIndexChange(
+            firstVisibleItemIndex = firstVisibleItemIndex,
+            offset = globalOffset,
+            index = INDEX,
+            size = totalSize,
+            onSuccessful = {
+                _isLoading.value = true
+                requestPlaylistsForSearch(
+                    text = _searchText.value,
+                    offset = globalOffset,
+                    isGetMorePlaylistsCase = true,
+                )
+            }
+        )
     }
 
     companion object {

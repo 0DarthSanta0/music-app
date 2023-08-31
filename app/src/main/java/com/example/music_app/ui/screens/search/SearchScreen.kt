@@ -45,7 +45,7 @@ fun SearchScreen(
 
     ScrollIndexChange(
         lazyListState = lazyListState,
-        onScrollIndexChange = viewModel::onScrollIndexChange
+        onScrollIndexChange = viewModel::onUIScrollIndexChange
     )
 
     Column(
