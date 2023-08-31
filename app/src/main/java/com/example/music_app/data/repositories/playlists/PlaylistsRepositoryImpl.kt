@@ -58,4 +58,28 @@ class PlaylistsRepositoryImpl(
             )
         }
     }
+
+    override suspend fun requestPlaylistsForSearch(
+        offset: Int,
+        limit: Int,
+        prefix: String,
+        type: String
+    ): Flow<Result<ListOfPlaylists, AppErrors>> = flow {
+        val playlistsForSearchResponse = spotifyAPI.getPlaylistsForSearch(
+            prefix = prefix,
+            type = type,
+            offset = offset,
+            limit = limit
+        )
+        val (totalSize, playlists) = with(playlistsForSearchResponse.playlists) {
+            total to items?.map(PlaylistItemResponse::toPlaylist)
+        }
+        emit(
+            if (playlists != null && totalSize != null) {
+                Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))
+            } else {
+                Err(AppErrors.ResponseError)
+            }
+        )
+    }
 }

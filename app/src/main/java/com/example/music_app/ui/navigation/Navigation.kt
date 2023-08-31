@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.music_app.ui.screens.login.LoginScreen
 import com.example.music_app.ui.screens.new_playlist.NewPlaylistScreen
 import com.example.music_app.ui.screens.playlists.PlaylistsScreen
+import com.example.music_app.ui.screens.search.SearchScreen
 
 
 @Composable
@@ -24,6 +25,13 @@ fun Navigation(startScreen: Screens?) {
         composable(route = Screens.PlaylistsScreen.route) {
             PlaylistsScreen(onAddNewPlaylist = {
                 navController.navigate(Screens.NewPlaylistScreen.route)
+            }, onSearch = {
+                navController.navigate(Screens.SearchScreen.route)
+            })
+        }
+        composable(route = Screens.SearchScreen.route) {
+            SearchScreen(onBackToPlaylists = {
+                navController.popBackStack()
             })
         }
         composable(route = Screens.NewPlaylistScreen.route) {
