@@ -31,7 +31,7 @@ fun Navigation(startScreen: Screens?) {
         }
         composable(route = Screens.SearchScreen.route) {
             SearchScreen(onBackToPlaylists = {
-                navController.navigate(Screens.PlaylistsScreen.route)
+                navController.popBackStack()
             })
         }
         composable(route = Screens.NewPlaylistScreen.route) {
