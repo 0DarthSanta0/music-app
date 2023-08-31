@@ -4,8 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,9 +58,7 @@ fun PlaylistsScreen(
         verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
         horizontalAlignment = CenterHorizontally
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(AppTheme.dimens.spacing80)
@@ -72,6 +70,7 @@ fun PlaylistsScreen(
                 painter = vectorPainter,
                 contentDescription = null,
                 modifier = Modifier
+                    .align(Alignment.Center)
                     .size(AppTheme.dimens.spacing60)
             )
             Icon(
@@ -79,6 +78,7 @@ fun PlaylistsScreen(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
+                    .align(Alignment.CenterEnd)
                     .size(AppTheme.dimens.spacing40)
                     .padding(AppTheme.dimens.spacing05)
                     .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
