@@ -16,18 +16,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,10 +32,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
 import com.example.music_app.ui.screens.core.ButtonField
+import com.example.music_app.ui.screens.core.ErrorLaunchedEffect
+import com.example.music_app.ui.screens.core.ErrorSnackbar
 import com.example.music_app.ui.screens.core.ScrollIndexChange
 import com.example.music_app.ui.theme.AppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistsScreen(
     viewModel: PlaylistsViewModel = viewModel(factory = PlaylistsViewModel.Factory),
@@ -63,33 +56,15 @@ fun PlaylistsScreen(
         onScrollIndexChange = viewModel::onUIScrollIndexChange
     )
 
-    LaunchedEffect(error) {
-        if (error != null) {
-            snackbarHostState.showSnackbar(
-                message = "",
-                duration = SnackbarDuration.Indefinite
-            )
-        }
-    }
+    ErrorLaunchedEffect(
+        error = error,
+        snackbarHostState = snackbarHostState
+    )
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) {
-                Snackbar(
-                    action = {
-                        Button(
-                            onClick = { viewModel.onError() },
-                            modifier = Modifier.padding(AppTheme.dimens.spacing10)
-                        ) {
-                            Text(text = stringResource(id = R.string.repeat))
-                        }
-                    },
-                    modifier = Modifier.padding(AppTheme.dimens.spacing20)
-                ) {
-                    Text(text = stringResource(id = error?.errorId ?: R.string.error))
-                }
-            }
-        },
+    ErrorSnackbar(
+        errorId = error?.errorId ?: R.string.error,
+        snackbarHostState = snackbarHostState,
+        onClick = { viewModel.onError() }
     ) { paddingValues ->
         Column(
             modifier = Modifier
