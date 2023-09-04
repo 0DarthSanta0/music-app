@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.music_app.AppErrors
 import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsForSearchUseCase
 import com.example.music_app.ui.screens.core.onScrollIndexChange
+import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +35,8 @@ class SearchViewModel(
     private var globalOffset = 0
     private var currentText = ""
 
+    private val _error: MutableStateFlow<AppErrors?> = MutableStateFlow(null)
+    val error: StateFlow<AppErrors?> get() = _error
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
     private val _searchText = MutableStateFlow("")
@@ -85,6 +89,8 @@ class SearchViewModel(
                     globalOffset = LIMIT
                     _isSearching.value = false
                 }
+            }.onFailure {
+                _error.value = AppErrors.ResponseError
             }
         }
     }
@@ -108,6 +114,14 @@ class SearchViewModel(
                 )
             }
         )
+    }
+
+    fun onError() {
+        _error.value = null
+        _isLoading.value = false
+        _isSearching.value = false
+        _playlists.value = listOf()
+        _searchText.value = ""
     }
 
     companion object {
