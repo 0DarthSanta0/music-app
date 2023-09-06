@@ -21,7 +21,6 @@ private const val MAX_DESCRIPTION_SIZE = 300
 class NewPlaylistViewModel(
     private val createPlaylistUseCase: CreatePlaylistUseCase
 ) : ViewModel() {
-
     private val _nameFieldState: MutableStateFlow<String> = MutableStateFlow("")
     val nameFieldState: StateFlow<String> get() = _nameFieldState
     private val _descriptionFieldState: MutableStateFlow<String> = MutableStateFlow("")
@@ -35,6 +34,9 @@ class NewPlaylistViewModel(
     private val _error: MutableStateFlow<AppErrors?> = MutableStateFlow(null)
     val error: StateFlow<AppErrors?> get() = _error
 
+    private fun changeErrorState(appError: AppErrors?) {
+        _error.value = appError
+    }
 
     private fun createPlaylist(
         name: String,
@@ -49,7 +51,7 @@ class NewPlaylistViewModel(
                 createPlaylist.onSuccess {
                     onCreatePlaylistSuccess()
                 }.onFailure { createPlaylistError ->
-                    _error.value = createPlaylistError
+                    changeErrorState(createPlaylistError)
                 }
             }
         }
@@ -73,7 +75,7 @@ class NewPlaylistViewModel(
     }
 
     fun onError() {
-        _error.value = null
+        changeErrorState(null)
         _isFormValid.value = _isNameValid.value
     }
 

@@ -1,4 +1,4 @@
-package com.example.music_app.ui.screens.core
+package com.example.music_app.ui.screens.core.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -6,23 +6,36 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.music_app.AppErrors
 import com.example.music_app.R
+import com.example.music_app.ui.screens.core.toUIStringRes
 import com.example.music_app.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ErrorSnackbar(
-    errorId: Int,
+    error: AppErrors?,
     snackbarHostState: SnackbarHostState,
     onClick: () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
+    LaunchedEffect(error) {
+        if (error != null) {
+            snackbarHostState.showSnackbar(
+                message = "",
+                duration = SnackbarDuration.Indefinite
+            )
+        }
+    }
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) {
@@ -37,7 +50,7 @@ fun ErrorSnackbar(
                     },
                     modifier = Modifier.padding(AppTheme.dimens.spacing20)
                 ) {
-                    Text(text = stringResource(id = errorId))
+                    Text(text = stringResource(id = error?.toUIStringRes() ?: R.string.error))
                 }
             }
         },

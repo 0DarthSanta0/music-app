@@ -1,5 +1,6 @@
-package com.example.music_app.ui.screens.core
+package com.example.music_app.ui.screens.core.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import com.example.music_app.ui.theme.AppTheme
 
 @Composable
 fun ErrorMessage(
+    @StringRes
     errorId: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier

@@ -1,9 +1,15 @@
 package com.example.music_app
 
-sealed class AppErrors(val errorId: Int) {
-    object EmptyRecTime : AppErrors(R.string.receiving_time_error)
-    object EmptyUserID : AppErrors(R.string.user_id_error)
-    object WrongTimeInterval : AppErrors(R.string.time_interval_error)
-    object DataBaseError : AppErrors(R.string.data_base_error)
-    object ResponseError : AppErrors(R.string.response_error)
+import com.example.music_app.constants.DATA_BASE_ERROR
+import com.example.music_app.constants.EMPTY_REC_TIME
+import com.example.music_app.constants.EMPTY_USER_ID
+import com.example.music_app.constants.RESPONSE_ERROR
+import com.example.music_app.constants.WRONG_TIME_INTERVAL
+
+sealed class AppErrors(val error: String) {
+    object EmptyRecTime : AppErrors(EMPTY_REC_TIME)
+    object EmptyUserID : AppErrors(EMPTY_USER_ID)
+    object WrongTimeInterval : AppErrors(WRONG_TIME_INTERVAL)
+    object DataBaseError : AppErrors(DATA_BASE_ERROR)
+    object ResponseError : AppErrors(RESPONSE_ERROR)
 }

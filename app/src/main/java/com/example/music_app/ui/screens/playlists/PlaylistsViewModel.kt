@@ -40,6 +40,10 @@ class PlaylistsViewModel(
         requestPlaylists()
     }
 
+    private fun changeErrorState(appError: AppErrors?) {
+        _error.value = appError
+    }
+
     private fun requestPlaylists() {
         viewModelScope.launch {
             requestPlaylistsUseCase(offset, LIMIT).collect { playlistsData ->
@@ -50,7 +54,7 @@ class PlaylistsViewModel(
                     offset += LIMIT
                     _isLoading.value = false
                 }.onFailure { requestError ->
-                    _error.value = requestError
+                    changeErrorState(requestError)
                 }
             }
         }
@@ -71,7 +75,7 @@ class PlaylistsViewModel(
     }
 
     fun onError() {
-        _error.value = null
+        changeErrorState(null)
         requestPlaylists()
     }
 

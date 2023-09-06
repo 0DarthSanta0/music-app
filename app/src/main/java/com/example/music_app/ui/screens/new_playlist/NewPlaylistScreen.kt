@@ -18,9 +18,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
-import com.example.music_app.ui.screens.core.ButtonField
-import com.example.music_app.ui.screens.core.ErrorLaunchedEffect
-import com.example.music_app.ui.screens.core.ErrorSnackbar
+import com.example.music_app.ui.screens.core.components.ButtonField
+import com.example.music_app.ui.screens.core.components.ErrorSnackbar
 import com.example.music_app.ui.theme.AppTheme
 
 
@@ -29,7 +28,6 @@ fun NewPlaylistScreen(
     viewModel: NewPlaylistViewModel = viewModel(factory = NewPlaylistViewModel.Factory),
     onCreatePlaylistSuccess: () -> Unit
 ) {
-
     val error by viewModel.error.collectAsStateWithLifecycle()
     val nameFieldState by viewModel.nameFieldState.collectAsStateWithLifecycle()
     val descriptionFieldState by viewModel.descriptionFieldState.collectAsStateWithLifecycle()
@@ -39,13 +37,8 @@ fun NewPlaylistScreen(
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    ErrorLaunchedEffect(
-        error = error,
-        snackbarHostState = snackbarHostState
-    )
-
     ErrorSnackbar(
-        errorId = error?.errorId ?: R.string.error,
+        error = error,
         snackbarHostState = snackbarHostState,
         onClick = { viewModel.onError() }
     ) { paddingValues ->

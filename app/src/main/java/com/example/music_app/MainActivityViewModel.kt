@@ -33,6 +33,14 @@ class MainActivityViewModel(
         checkStatus()
     }
 
+    private fun changeRouteState(screen: Screens) {
+        _route.value = screen
+    }
+
+    private fun changeErrorState(appError: AppErrors) {
+        _error.value = appError
+    }
+
     fun checkStatus() {
         viewModelScope.launch {
             isAuthorizedCheckUseCase().onSuccess { isAuth ->
@@ -41,23 +49,22 @@ class MainActivityViewModel(
                         if (isOutdated) {
                             requestRefreshTokenUseCase().collect { token ->
                                 token.onSuccess {
-                                    _route.value =
-                                        Screens.PlaylistsScreen
+                                    changeRouteState(Screens.PlaylistsScreen)
                                 }.onFailure { tokenRequestError ->
-                                    _error.value = tokenRequestError
+                                    changeErrorState(tokenRequestError)
                                 }
                             }
                         } else {
-                            _route.value = Screens.PlaylistsScreen
+                            changeRouteState(Screens.PlaylistsScreen)
                         }
                     }.onFailure { isOutdatedError ->
-                        _error.value = isOutdatedError
+                        changeErrorState(isOutdatedError)
                     }
                 } else {
-                    _route.value = Screens.LoginScreen
+                    changeRouteState(Screens.LoginScreen)
                 }
             }.onFailure { isAuthError ->
-                _error.value = isAuthError
+                changeErrorState(isAuthError)
             }
             delay(WAIT_TIME)
             _isSplashScreenVisible.value = false

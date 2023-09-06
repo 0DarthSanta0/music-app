@@ -30,7 +30,6 @@ private const val INDEX = 6
 class SearchViewModel(
     private val searchUseCase: RequestPlaylistsForSearchUseCase
 ) : ViewModel() {
-
     private var totalSize = 0
     private var globalOffset = 0
     private var currentText = ""
@@ -67,17 +66,20 @@ class SearchViewModel(
             _playlists.value
         )
 
+    private fun changeErrorState(appError: AppErrors?) {
+        _error.value = appError
+    }
+
     private fun requestPlaylistsForSearch(
         text: String,
         isGetMorePlaylistsCase: Boolean,
         offset: Int = 0
     ) = viewModelScope.launch {
-        val playlistsResponseFlow = searchUseCase(
+        searchUseCase(
             offset = offset,
             limit = LIMIT,
             prefix = text
-        )
-        playlistsResponseFlow.collect { playlistsResponse ->
+        ).collect { playlistsResponse ->
             playlistsResponse.onSuccess { playlists ->
                 if (isGetMorePlaylistsCase) {
                     _playlists.value += playlists.playlists
@@ -89,8 +91,8 @@ class SearchViewModel(
                     globalOffset = LIMIT
                     _isSearching.value = false
                 }
-            }.onFailure {
-                _error.value = AppErrors.ResponseError
+            }.onFailure { playlistsResponseError ->
+                changeErrorState(playlistsResponseError)
             }
         }
     }
@@ -117,7 +119,7 @@ class SearchViewModel(
     }
 
     fun onError() {
-        _error.value = null
+        changeErrorState(null)
         _isLoading.value = false
         _isSearching.value = false
         _playlists.value = listOf()

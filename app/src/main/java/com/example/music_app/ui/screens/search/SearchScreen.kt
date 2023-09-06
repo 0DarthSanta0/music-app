@@ -28,10 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
-import com.example.music_app.ui.screens.core.ButtonField
-import com.example.music_app.ui.screens.core.ErrorLaunchedEffect
-import com.example.music_app.ui.screens.core.ErrorSnackbar
-import com.example.music_app.ui.screens.core.ScrollIndexChange
+import com.example.music_app.ui.screens.core.components.ButtonField
+import com.example.music_app.ui.screens.core.components.ErrorSnackbar
+import com.example.music_app.ui.screens.core.components.ScrollIndexChange
 import com.example.music_app.ui.screens.playlists.PlaylistsField
 import com.example.music_app.ui.theme.AppTheme
 
@@ -55,13 +54,8 @@ fun SearchScreen(
         onScrollIndexChange = viewModel::onUIScrollIndexChange
     )
 
-    ErrorLaunchedEffect(
-        error = error,
-        snackbarHostState = snackbarHostState
-    )
-
     ErrorSnackbar(
-        errorId = error?.errorId ?: R.string.error,
+        error = error,
         snackbarHostState = snackbarHostState,
         onClick = { viewModel.onError() }
     ) {

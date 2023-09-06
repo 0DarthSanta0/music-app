@@ -25,9 +25,13 @@ class LoginViewModel(
     private val _error: MutableStateFlow<AppErrors?> = MutableStateFlow(null)
     val error: StateFlow<AppErrors?> get() = _error
 
+    private fun changeErrorState(appError: AppErrors) {
+        _error.value = appError
+    }
+
     fun requestToken(code: String?, error: AppErrors?, onLoginSuccess: () -> Unit) {
         if (error != null) {
-            _error.value = error
+            changeErrorState(error)
         }
         if (code != null) {
             viewModelScope.launch {
@@ -35,16 +39,15 @@ class LoginViewModel(
                     .collect { token ->
                         token.onSuccess {
                             requestUserIdUseCase().onFailure { idResponseError ->
-                                _error.value = idResponseError
+                                changeErrorState(idResponseError)
                             }
                             onLoginSuccess()
-                        }.onFailure {tokenResponseError ->
-                            _error.value = tokenResponseError
+                        }.onFailure { tokenResponseError ->
+                            changeErrorState(tokenResponseError)
                         }
                     }
             }
         }
-
     }
 
     companion object {

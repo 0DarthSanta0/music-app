@@ -11,7 +11,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.AppErrors
 import com.example.music_app.constants.AUTH_URL
-import com.example.music_app.ui.screens.core.ErrorMessage
+import com.example.music_app.ui.screens.core.components.ErrorMessage
+import com.example.music_app.ui.screens.core.toUIStringRes
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewState
 
@@ -27,7 +28,7 @@ fun LoginScreen(
     val error by viewModel.error.collectAsStateWithLifecycle()
     if (error != null) {
         ErrorMessage(
-            errorId = error?.errorId ?: 0,
+            errorId = error?.toUIStringRes() ?: 0,
             onClick = { onLoginError() },
             modifier = Modifier.fillMaxSize()
         )

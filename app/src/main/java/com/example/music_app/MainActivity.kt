@@ -12,7 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.music_app.ui.navigation.Navigation
-import com.example.music_app.ui.screens.core.ErrorMessage
+import com.example.music_app.ui.screens.core.components.ErrorMessage
+import com.example.music_app.ui.screens.core.toUIStringRes
 import com.example.music_app.ui.theme.MusicAppTheme
 
 
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
                         Navigation(screen)
                     } else {
                         ErrorMessage(
-                            errorId = error?.errorId ?: 0,
+                            errorId = error?.toUIStringRes() ?: 0,
                             onClick = { viewModel.checkStatus() },
                             modifier = Modifier.fillMaxSize()
                         )
