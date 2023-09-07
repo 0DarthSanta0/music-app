@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -32,22 +33,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
 import com.example.music_app.ui.screens.core.components.ButtonField
-import com.example.music_app.ui.screens.core.components.ErrorSnackbar
+import com.example.music_app.ui.screens.core.components.ErrorScaffold
 import com.example.music_app.ui.screens.core.components.ScrollIndexChange
 import com.example.music_app.ui.theme.AppTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlaylistsScreen(
     viewModel: PlaylistsViewModel = viewModel(factory = PlaylistsViewModel.Factory),
     onAddNewPlaylist: () -> Unit,
     onSearch: () -> Unit
 ) {
-    val playlists by viewModel.playlistsForDisplay.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-    val isFirstLoading by viewModel.isFirstLoading.collectAsStateWithLifecycle()
-    val lazyListState: LazyListState = rememberLazyListState()
 
+    val lazyListState: LazyListState = rememberLazyListState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     ScrollIndexChange(
@@ -55,64 +54,84 @@ fun PlaylistsScreen(
         onScrollIndexChange = viewModel::onUIScrollIndexChange
     )
 
-    ErrorSnackbar(
+    ErrorScaffold(
         error = error,
         snackbarHostState = snackbarHostState,
         onClick = { viewModel.onError() }
     ) { paddingValues ->
-        Column(
+        PlaylistScreenContent(
+            modifier = Modifier.padding(paddingValues),
+            viewModel = viewModel,
+            lazyListState = lazyListState,
+            onAddNewPlaylist = onAddNewPlaylist,
+            onSearch = onSearch
+        )
+    }
+}
+
+@Composable
+private fun PlaylistScreenContent(
+    modifier: Modifier = Modifier,
+    viewModel: PlaylistsViewModel,
+    lazyListState: LazyListState,
+    onAddNewPlaylist: () -> Unit,
+    onSearch: () -> Unit
+) {
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val isFirstLoading by viewModel.isFirstLoading.collectAsStateWithLifecycle()
+    val playlists by viewModel.playlistsForDisplay.collectAsStateWithLifecycle()
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(AppTheme.dimens.spacing10),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
+        horizontalAlignment = CenterHorizontally
+    ) {
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(paddingValues)
-                .padding(AppTheme.dimens.spacing10),
-            verticalArrangement = Arrangement.spacedBy(AppTheme.dimens.spacing10),
-            horizontalAlignment = CenterHorizontally
+                .fillMaxWidth()
+                .height(AppTheme.dimens.spacing80)
+                .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ) {
-            Box(
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(AppTheme.dimens.spacing80)
-                    .clip(RoundedCornerShape(AppTheme.dimens.spacing08))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(AppTheme.dimens.spacing60)
-                )
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .size(AppTheme.dimens.spacing40)
-                        .padding(AppTheme.dimens.spacing05)
-                        .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
-                        .clickable {
-                            onSearch()
-                        }
-                )
-            }
-            PlaylistsField(
-                lazyListState = lazyListState,
-                playlists = playlists,
-                isLoading = isLoading,
-                isFirstLoading = isLoading && isFirstLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                    .align(Alignment.Center)
+                    .size(AppTheme.dimens.spacing60)
             )
-            ButtonField(
-                text = stringResource(R.string.new_playlist),
-                onClick = { onAddNewPlaylist() },
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(AppTheme.dimens.spacing80)
+                    .align(Alignment.CenterEnd)
+                    .size(AppTheme.dimens.spacing40)
+                    .padding(AppTheme.dimens.spacing05)
+                    .clip(RoundedCornerShape(AppTheme.dimens.spacing20))
+                    .clickable {
+                        onSearch()
+                    }
             )
         }
+        PlaylistsField(
+            lazyListState = lazyListState,
+            playlists = playlists,
+            isLoading = isLoading,
+            isFirstLoading = isLoading && isFirstLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        )
+        ButtonField(
+            text = stringResource(R.string.new_playlist),
+            onClick = { onAddNewPlaylist() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(AppTheme.dimens.spacing80)
+        )
     }
 }
