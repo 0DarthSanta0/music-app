@@ -28,7 +28,8 @@ import com.example.music_app.ui.theme.AppTheme
 @Composable
 fun NewPlaylistScreen(
     viewModel: NewPlaylistViewModel = viewModel(factory = NewPlaylistViewModel.Factory),
-    onCreatePlaylistSuccess: () -> Unit
+    onCreatePlaylistSuccess: () -> Unit,
+    onError: () -> Unit
 ) {
     val error by viewModel.error.collectAsStateWithLifecycle()
 
@@ -37,7 +38,7 @@ fun NewPlaylistScreen(
     ErrorScaffold(
         error = error,
         snackbarHostState = snackbarHostState,
-        onClick = { viewModel.onError() }
+        onClick = { viewModel.onError(onError) }
     ) { paddingValues ->
         NewPlaylistScreenContent(
             modifier = Modifier.padding(paddingValues),

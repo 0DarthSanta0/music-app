@@ -13,7 +13,7 @@ class CreatePlaylistUseCase(
         description: String?
     ): Flow<Result<Unit, AppErrors>> =
         playlistsRepository.createPlaylist(
-            name = name,
+            playlistName = name,
             description = description
         )
 }

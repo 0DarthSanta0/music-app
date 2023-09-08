@@ -9,6 +9,7 @@ import com.example.music_app.AppErrors
 import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.CreatePlaylistUseCase
+import com.example.music_app.ui.screens.core.reLoginCheck
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,9 +75,15 @@ class NewPlaylistViewModel(
         _isNameFieldActive.value = true
     }
 
-    fun onError() {
-        changeErrorState(null)
-        _isFormValid.value = _isNameValid.value
+    fun onError(navigateOnError: () -> Unit) {
+        reLoginCheck(
+            error = _error.value,
+            onTrue = navigateOnError,
+            onFalse = {
+                changeErrorState(null)
+                _isFormValid.value = _isNameValid.value
+            }
+        )
     }
 
     fun onDescriptionValueChange(newValue: String) {

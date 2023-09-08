@@ -11,8 +11,9 @@ import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsUseCase
-import com.github.michaelbull.result.onFailure
 import com.example.music_app.ui.screens.core.onScrollIndexChange
+import com.example.music_app.ui.screens.core.reLoginCheck
+import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +25,6 @@ private const val INDEX = 6
 class PlaylistsViewModel(
     private val requestPlaylistsUseCase: RequestPlaylistsUseCase
 ) : ViewModel() {
-
     private var totalSize = 0
     private var offset = 0
     private val _playlistsForDisplay: MutableStateFlow<List<Playlist>> = MutableStateFlow(listOf())
@@ -74,9 +74,15 @@ class PlaylistsViewModel(
         )
     }
 
-    fun onError() {
-        changeErrorState(null)
-        requestPlaylists()
+    fun onError(navigateOnError: () -> Unit) {
+        reLoginCheck(
+            error = _error.value,
+            onTrue = navigateOnError,
+            onFalse = {
+                changeErrorState(null)
+                requestPlaylists()
+            }
+        )
     }
 
     companion object {

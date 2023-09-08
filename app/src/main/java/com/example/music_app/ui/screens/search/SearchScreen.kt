@@ -39,7 +39,8 @@ import com.example.music_app.ui.theme.AppTheme
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory),
-    onBackToPlaylists: () -> Unit
+    onBackToPlaylists: () -> Unit,
+    onError: () -> Unit
 ) {
     val error by viewModel.error.collectAsStateWithLifecycle()
 
@@ -54,7 +55,7 @@ fun SearchScreen(
     ErrorScaffold(
         error = error,
         snackbarHostState = snackbarHostState,
-        onClick = { viewModel.onError() }
+        onClick = { viewModel.onError(onError) }
     ) { paddingValues ->
         SearchScreenContent(
             modifier = Modifier.padding(paddingValues),

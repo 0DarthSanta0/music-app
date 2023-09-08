@@ -11,6 +11,7 @@ import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsForSearchUseCase
 import com.example.music_app.ui.screens.core.onScrollIndexChange
+import com.example.music_app.ui.screens.core.reLoginCheck
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.FlowPreview
@@ -118,12 +119,18 @@ class SearchViewModel(
         )
     }
 
-    fun onError() {
-        changeErrorState(null)
-        _isLoading.value = false
-        _isSearching.value = false
-        _playlists.value = listOf()
-        _searchText.value = ""
+    fun onError(navigateOnError: () -> Unit) {
+        reLoginCheck(
+            error = _error.value,
+            onTrue = navigateOnError,
+            onFalse = {
+                changeErrorState(null)
+                _isLoading.value = false
+                _isSearching.value = false
+                _playlists.value = listOf()
+                _searchText.value = ""
+            }
+        )
     }
 
     companion object {
