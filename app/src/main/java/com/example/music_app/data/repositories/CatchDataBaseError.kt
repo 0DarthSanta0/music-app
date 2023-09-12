@@ -7,7 +7,7 @@ import com.github.michaelbull.result.Result
 import java.io.IOException
 
 
-inline infix fun <T, V> T.catchErrors(block: T.() -> V): Result<V, AppErrors> {
+inline infix fun <T, V> T.catchDataBaseErrors(block: T.() -> V): Result<V, AppErrors> {
     return try {
         Ok(block())
     } catch (e: IOException) {

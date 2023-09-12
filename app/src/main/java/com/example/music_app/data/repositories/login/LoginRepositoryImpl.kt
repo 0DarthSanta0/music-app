@@ -7,7 +7,7 @@ import com.example.music_app.constants.SPOTIFY_CLIENT_SECRET
 import com.example.music_app.data.data_store.DataStoreManager
 import com.example.music_app.data.models.TokenRefreshResponse
 import com.example.music_app.data.models.TokenResponse
-import com.example.music_app.data.repositories.catchErrors
+import com.example.music_app.data.repositories.catchDataBaseErrors
 import com.example.music_app.domain.repositories.LoginRepository
 import com.example.music_app.network.AuthService
 import com.github.michaelbull.result.Err
@@ -74,13 +74,13 @@ class LoginRepositoryImpl(
         }
 
     override suspend fun isAuthorized(): Result<Boolean, AppErrors> =
-        catchErrors {
+        catchDataBaseErrors {
             dataStoreManager.getString(TOKEN_KEY).isNotEmpty()
         }
 
 
     override suspend fun isOutdated(): Result<Boolean, AppErrors> =
-        catchErrors {
+        catchDataBaseErrors {
             val recTimeString = dataStoreManager.getString(TIME_KEY)
             if (recTimeString.isEmpty()) return Err(AppErrors.EmptyRecTime)
             val recTime = Instant.parse(dataStoreManager.getString(TIME_KEY))

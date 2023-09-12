@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.AppErrors
@@ -28,7 +29,7 @@ fun LoginScreen(
     val error by viewModel.error.collectAsStateWithLifecycle()
     if (error != null) {
         ErrorMessage(
-            errorId = error?.toUIStringRes() ?: 0,
+            errorId = error?.toUIStringRes() ?: ResourcesCompat.ID_NULL,
             onClick = { onLoginError() },
             modifier = Modifier.fillMaxSize()
         )

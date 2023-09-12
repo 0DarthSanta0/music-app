@@ -5,8 +5,8 @@ import com.example.music_app.data.data_store.DataStoreManager
 import com.example.music_app.data.models.CreatePlaylistBody
 import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.PlaylistItemResponse
-import com.example.music_app.data.repositories.catchErrors
-import com.example.music_app.data.repositories.toAppErrors
+import com.example.music_app.data.repositories.catchAPIErrors
+import com.example.music_app.data.repositories.catchDataBaseErrors
 import com.example.music_app.domain.repositories.PlaylistsRepository
 import com.example.music_app.network.PlaylistsService
 import com.github.michaelbull.result.Err
@@ -34,13 +34,11 @@ class PlaylistsRepositoryImpl(
         }
         val error = playlistsResponse.error
         emit(
-            when {
-                playlists != null && totalSize != null -> {
-                    Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))
-                }
-
-                error != null -> Err(error.toAppErrors())
-                else -> Err(AppErrors.ResponseError)
+            catchAPIErrors(
+                isSuccess = playlists != null && totalSize != null,
+                error = error
+            ) {
+                Ok(ListOfPlaylists(playlists = playlists ?: listOf(), totalSize = totalSize ?: 0))
             }
         )
     }
@@ -49,7 +47,7 @@ class PlaylistsRepositoryImpl(
         playlistName: String,
         description: String?
     ): Flow<Result<Unit, AppErrors>> = flow {
-        catchErrors {
+        catchDataBaseErrors {
             val userIdResponse = dataStoreManager.getString(USER_ID_KEY)
             if (userIdResponse.isEmpty()) emit(Err(AppErrors.EmptyUserID))
             val postResponse = spotifyAPI.createPlaylist(
@@ -61,10 +59,11 @@ class PlaylistsRepositoryImpl(
             )
             emit(
                 with(postResponse) {
-                    when {
-                        name != null -> Ok(Unit)
-                        error != null -> Err(error.toAppErrors())
-                        else -> Err(AppErrors.ResponseError)
+                    catchAPIErrors(
+                        isSuccess = name != null,
+                        error = error
+                    ) {
+                        Ok(Unit)
                     }
                 }
             )
@@ -84,32 +83,20 @@ class PlaylistsRepositoryImpl(
             limit = limit
         )
         with(playlistsForSearchResponse) {
-            when {
-                playlists != null -> {
-                    val (totalSize, playlists) = with(playlists) {
-                        total to items?.map(PlaylistItemResponse::toPlaylist)
-                    }
-                    emit(
-                        if (playlists != null && totalSize != null) {
-                            Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))
-                        } else {
-                            Err(AppErrors.ResponseError)
-                        }
-                    )
-                }
-
-                error != null -> {
-                    emit(
-                        Err(error.toAppErrors())
-                    )
-                }
-
-                else -> {
-                    emit(
+            emit(
+                catchAPIErrors(
+                    isSuccess = playlists != null,
+                    error = error
+                ) {
+                    val (totalSize, playlists) =
+                        playlists?.total to playlists?.items?.map(PlaylistItemResponse::toPlaylist)
+                    if (playlists != null && totalSize != null) {
+                        Ok(ListOfPlaylists(playlists = playlists, totalSize = totalSize))
+                    } else {
                         Err(AppErrors.ResponseError)
-                    )
+                    }
                 }
-            }
+            )
         }
     }
 }

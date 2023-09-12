@@ -1,13 +1,13 @@
 package com.example.music_app
 
-import com.example.music_app.constants.DATA_BASE_ERROR
-import com.example.music_app.constants.EMPTY_REC_TIME
-import com.example.music_app.constants.EMPTY_USER_ID
-import com.example.music_app.constants.RESPONSE_ERROR
-import com.example.music_app.constants.RESPONSE_ERROR_401
-import com.example.music_app.constants.RESPONSE_ERROR_403
-import com.example.music_app.constants.RESPONSE_ERROR_429
-import com.example.music_app.constants.WRONG_TIME_INTERVAL
+private const val EMPTY_REC_TIME = "Empty receiving time"
+private const val EMPTY_USER_ID = "Empty user id"
+private const val WRONG_TIME_INTERVAL = "Wrong time interval"
+private const val DATA_BASE_ERROR = "Data base error"
+private const val RESPONSE_ERROR = "Response error"
+private const val RESPONSE_ERROR_401 = "Response error 401"
+private const val RESPONSE_ERROR_403 = "Response error 403"
+private const val RESPONSE_ERROR_429 = "Response error 429"
 
 sealed class AppErrors(val error: String) {
     object EmptyRecTime : AppErrors(EMPTY_REC_TIME)

@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.music_app.ui.navigation.Navigation
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                         Navigation(screen)
                     } else {
                         ErrorMessage(
-                            errorId = error?.toUIStringRes() ?: 0,
+                            errorId = error?.toUIStringRes() ?: ResourcesCompat.ID_NULL,
                             onClick = { viewModel.checkStatus() },
                             modifier = Modifier.fillMaxSize()
                         )
