@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -15,9 +16,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,8 +29,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.music_app.R
-import com.example.music_app.ui.screens.core.ButtonField
-import com.example.music_app.ui.screens.core.ScrollIndexChange
+import com.example.music_app.ui.screens.core.components.ButtonField
+import com.example.music_app.ui.screens.core.components.ErrorScaffold
+import com.example.music_app.ui.screens.core.components.ScrollIndexChange
 import com.example.music_app.ui.screens.playlists.PlaylistsField
 import com.example.music_app.ui.theme.AppTheme
 
@@ -35,21 +39,48 @@ import com.example.music_app.ui.theme.AppTheme
 @Composable
 fun SearchScreen(
     viewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory),
-    onBackToPlaylists: () -> Unit
+    onBackToPlaylists: () -> Unit,
+    onError: () -> Unit
 ) {
-    val searchText by viewModel.searchText.collectAsStateWithLifecycle()
-    val playlists by viewModel.playlists.collectAsStateWithLifecycle()
-    val isSearching by viewModel.isSearching.collectAsStateWithLifecycle()
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+    val error by viewModel.error.collectAsStateWithLifecycle()
+
     val lazyListState = rememberLazyListState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     ScrollIndexChange(
         lazyListState = lazyListState,
         onScrollIndexChange = viewModel::onUIScrollIndexChange
     )
 
+    ErrorScaffold(
+        error = error,
+        snackbarHostState = snackbarHostState,
+        onClick = { viewModel.onError(onError) }
+    ) { paddingValues ->
+        SearchScreenContent(
+            modifier = Modifier.padding(paddingValues),
+            viewModel = viewModel,
+            lazyListState = lazyListState,
+            onBackToPlaylists = onBackToPlaylists
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchScreenContent(
+    modifier: Modifier = Modifier,
+    viewModel: SearchViewModel,
+    lazyListState: LazyListState,
+    onBackToPlaylists: () -> Unit
+) {
+    val searchText by viewModel.searchText.collectAsStateWithLifecycle()
+    val playlists by viewModel.playlists.collectAsStateWithLifecycle()
+    val isSearching by viewModel.isSearching.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(AppTheme.dimens.spacing10),

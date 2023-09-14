@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PlaylistsRepository {
     suspend fun createPlaylist(
-        name: String,
+        playlistName: String,
         description: String?
     ): Flow<Result<Unit, AppErrors>>
 

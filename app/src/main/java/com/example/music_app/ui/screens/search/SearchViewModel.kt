@@ -5,11 +5,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.music_app.AppErrors
 import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsForSearchUseCase
 import com.example.music_app.ui.screens.core.onScrollIndexChange
+import com.example.music_app.ui.screens.core.reLoginCheck
+import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,11 +31,12 @@ private const val INDEX = 6
 class SearchViewModel(
     private val searchUseCase: RequestPlaylistsForSearchUseCase
 ) : ViewModel() {
-
     private var totalSize = 0
     private var globalOffset = 0
     private var currentText = ""
 
+    private val _error: MutableStateFlow<AppErrors?> = MutableStateFlow(null)
+    val error: StateFlow<AppErrors?> get() = _error
     private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
     private val _searchText = MutableStateFlow("")
@@ -63,17 +67,20 @@ class SearchViewModel(
             _playlists.value
         )
 
+    private fun changeErrorState(appError: AppErrors?) {
+        _error.value = appError
+    }
+
     private fun requestPlaylistsForSearch(
         text: String,
         isGetMorePlaylistsCase: Boolean,
         offset: Int = 0
     ) = viewModelScope.launch {
-        val playlistsResponseFlow = searchUseCase(
+        searchUseCase(
             offset = offset,
             limit = LIMIT,
             prefix = text
-        )
-        playlistsResponseFlow.collect { playlistsResponse ->
+        ).collect { playlistsResponse ->
             playlistsResponse.onSuccess { playlists ->
                 if (isGetMorePlaylistsCase) {
                     _playlists.value += playlists.playlists
@@ -85,6 +92,8 @@ class SearchViewModel(
                     globalOffset = LIMIT
                     _isSearching.value = false
                 }
+            }.onFailure { playlistsResponseError ->
+                changeErrorState(playlistsResponseError)
             }
         }
     }
@@ -106,6 +115,20 @@ class SearchViewModel(
                     offset = globalOffset,
                     isGetMorePlaylistsCase = true,
                 )
+            }
+        )
+    }
+
+    fun onError(navigateOnError: () -> Unit) {
+        reLoginCheck(
+            error = _error.value,
+            onLoginErrors = navigateOnError,
+            onOtherErrors = {
+                changeErrorState(null)
+                _isLoading.value = false
+                _isSearching.value = false
+                _playlists.value = listOf()
+                _searchText.value = ""
             }
         )
     }

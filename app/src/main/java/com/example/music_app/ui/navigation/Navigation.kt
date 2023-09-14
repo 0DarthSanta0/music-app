@@ -20,6 +20,8 @@ fun Navigation(startScreen: Screens?) {
         composable(route = Screens.LoginScreen.route) {
             LoginScreen(onLoginSuccess = {
                 navController.navigate(Screens.PlaylistsScreen.route)
+            }, onLoginError = {
+                navController.navigate(Screens.LoginScreen.route)
             })
         }
         composable(route = Screens.PlaylistsScreen.route) {
@@ -27,16 +29,22 @@ fun Navigation(startScreen: Screens?) {
                 navController.navigate(Screens.NewPlaylistScreen.route)
             }, onSearch = {
                 navController.navigate(Screens.SearchScreen.route)
+            }, onError = {
+                navController.navigate(Screens.LoginScreen.route)
             })
         }
         composable(route = Screens.SearchScreen.route) {
             SearchScreen(onBackToPlaylists = {
                 navController.popBackStack()
+            }, onError = {
+                navController.navigate(Screens.LoginScreen.route)
             })
         }
         composable(route = Screens.NewPlaylistScreen.route) {
             NewPlaylistScreen(onCreatePlaylistSuccess = {
                 navController.navigate(Screens.PlaylistsScreen.route)
+            }, onError = {
+                navController.navigate(Screens.LoginScreen.route)
             })
         }
     }

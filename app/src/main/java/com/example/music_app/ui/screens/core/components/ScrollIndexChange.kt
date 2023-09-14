@@ -1,4 +1,4 @@
-package com.example.music_app.ui.screens.core
+package com.example.music_app.ui.screens.core.components
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable

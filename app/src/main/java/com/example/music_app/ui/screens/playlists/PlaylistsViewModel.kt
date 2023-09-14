@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.music_app.AppErrors
 import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
 import com.example.music_app.domain.use_cases.RequestPlaylistsUseCase
 import com.example.music_app.ui.screens.core.onScrollIndexChange
+import com.example.music_app.ui.screens.core.reLoginCheck
+import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +25,6 @@ private const val INDEX = 6
 class PlaylistsViewModel(
     private val requestPlaylistsUseCase: RequestPlaylistsUseCase
 ) : ViewModel() {
-
     private var totalSize = 0
     private var offset = 0
     private val _playlistsForDisplay: MutableStateFlow<List<Playlist>> = MutableStateFlow(listOf())
@@ -31,9 +33,15 @@ class PlaylistsViewModel(
     val isLoading: StateFlow<Boolean> get() = _isLoading
     private val _isFirstLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
     val isFirstLoading: StateFlow<Boolean> get() = _isFirstLoading
+    private val _error: MutableStateFlow<AppErrors?> = MutableStateFlow(null)
+    val error: StateFlow<AppErrors?> get() = _error
 
     init {
         requestPlaylists()
+    }
+
+    private fun changeErrorState(appError: AppErrors?) {
+        _error.value = appError
     }
 
     private fun requestPlaylists() {
@@ -45,6 +53,8 @@ class PlaylistsViewModel(
                     totalSize = listOfPlaylists.totalSize
                     offset += LIMIT
                     _isLoading.value = false
+                }.onFailure { requestError ->
+                    changeErrorState(requestError)
                 }
             }
         }
@@ -59,6 +69,17 @@ class PlaylistsViewModel(
             onSuccessful = {
                 _isLoading.value = true
                 _isFirstLoading.value = false
+                requestPlaylists()
+            }
+        )
+    }
+
+    fun onError(navigateOnError: () -> Unit) {
+        reLoginCheck(
+            error = _error.value,
+            onLoginErrors = navigateOnError,
+            onOtherErrors = {
+                changeErrorState(null)
                 requestPlaylists()
             }
         )
