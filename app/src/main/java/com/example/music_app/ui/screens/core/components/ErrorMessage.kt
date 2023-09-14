@@ -16,8 +16,7 @@ import com.example.music_app.ui.theme.AppTheme
 
 @Composable
 fun ErrorMessage(
-    @StringRes
-    errorId: Int,
+    @StringRes errorId: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
