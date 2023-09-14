@@ -122,8 +122,8 @@ class SearchViewModel(
     fun onError(navigateOnError: () -> Unit) {
         reLoginCheck(
             error = _error.value,
-            onTrue = navigateOnError,
-            onFalse = {
+            onLoginErrors = navigateOnError,
+            onOtherErrors = {
                 changeErrorState(null)
                 _isLoading.value = false
                 _isSearching.value = false

@@ -32,11 +32,10 @@ class PlaylistsRepositoryImpl(
         val (totalSize, playlists) = with(playlistsResponse) {
             total to items?.map(PlaylistItemResponse::toPlaylist)
         }
-        val error = playlistsResponse.error
         emit(
             catchAPIErrors(
                 isSuccess = playlists != null && totalSize != null,
-                error = error
+                error = playlistsResponse.error
             ) {
                 Ok(ListOfPlaylists(playlists = playlists ?: listOf(), totalSize = totalSize ?: 0))
             }

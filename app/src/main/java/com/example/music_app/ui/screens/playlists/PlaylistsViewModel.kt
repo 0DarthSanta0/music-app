@@ -77,8 +77,8 @@ class PlaylistsViewModel(
     fun onError(navigateOnError: () -> Unit) {
         reLoginCheck(
             error = _error.value,
-            onTrue = navigateOnError,
-            onFalse = {
+            onLoginErrors = navigateOnError,
+            onOtherErrors = {
                 changeErrorState(null)
                 requestPlaylists()
             }

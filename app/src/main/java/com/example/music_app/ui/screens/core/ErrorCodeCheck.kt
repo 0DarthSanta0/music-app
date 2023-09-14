@@ -4,12 +4,12 @@ import com.example.music_app.AppErrors
 
 fun reLoginCheck(
     error: AppErrors?,
-    onTrue: () -> Unit,
-    onFalse: () -> Unit
+    onLoginErrors: () -> Unit,
+    onOtherErrors: () -> Unit
 ) {
     if (error == AppErrors.ResponseError401 || error == AppErrors.ResponseError403) {
-        onTrue()
+        onLoginErrors()
     } else {
-        onFalse()
+        onOtherErrors()
     }
 }

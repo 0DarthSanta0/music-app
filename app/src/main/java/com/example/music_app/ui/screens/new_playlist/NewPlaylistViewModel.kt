@@ -78,8 +78,8 @@ class NewPlaylistViewModel(
     fun onError(navigateOnError: () -> Unit) {
         reLoginCheck(
             error = _error.value,
-            onTrue = navigateOnError,
-            onFalse = {
+            onLoginErrors = navigateOnError,
+            onOtherErrors = {
                 changeErrorState(null)
                 _isFormValid.value = _isNameValid.value
             }
