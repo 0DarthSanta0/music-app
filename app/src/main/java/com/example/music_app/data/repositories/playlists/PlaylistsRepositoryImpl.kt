@@ -1,9 +1,14 @@
 package com.example.music_app.data.repositories.playlists
 
+import androidx.room.Room
 import com.example.music_app.AppErrors
+import com.example.music_app.MusicAppApplication
 import com.example.music_app.data.data_store.DataStoreManager
+import com.example.music_app.data.database.playlists.PlaylistDatabase
+import com.example.music_app.data.database.playlists.models.PlaylistEntity
 import com.example.music_app.data.models.CreatePlaylistBody
 import com.example.music_app.data.models.ListOfPlaylists
+import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.models.PlaylistItemResponse
 import com.example.music_app.data.repositories.catchAPIErrors
 import com.example.music_app.data.repositories.catchDataBaseErrors
@@ -14,13 +19,21 @@ import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.time.Instant
 
 private const val USER_ID_KEY = "user_id"
+private const val DATABASE_NAME = "playlist-database"
 
 class PlaylistsRepositoryImpl(
     private val dataStoreManager: DataStoreManager,
-    private var spotifyAPI: PlaylistsService = PlaylistsService.getInstance()
+    private var spotifyAPI: PlaylistsService = PlaylistsService.getInstance(),
+    private val database: PlaylistDatabase = Room.databaseBuilder(
+        MusicAppApplication.applicationContext(),
+        PlaylistDatabase::class.java, DATABASE_NAME
+    ).build()
 ) : PlaylistsRepository {
+
+
     override suspend fun requestListOfPlaylists(
         offset: Int,
         limit: Int
@@ -29,17 +42,21 @@ class PlaylistsRepositoryImpl(
             offset = offset.toString(),
             limit = limit.toString()
         )
-        val (totalSize, playlists) = with(playlistsResponse) {
-            total to items?.map(PlaylistItemResponse::toPlaylist)
+        with(playlistsResponse) {
+            val totalSize = total
+            val (playlistsEntities, playlists) =
+                items?.map(PlaylistItemResponse::toPlaylistEntity) to items?.map(PlaylistItemResponse::toPlaylist)
+            emit(
+                catchAPIErrors(
+                    isSuccess = playlists != null && totalSize != null,
+                    error = error
+                ) {
+                    database.dao.upsertListOfPlaylists(playlistsEntities ?: listOf())
+                    Ok(ListOfPlaylists(playlists = database.dao.getAllPlaylistsSortedByPinDate(limit = limit + offset).map(
+                        PlaylistEntity::toPlaylist), totalSize = totalSize ?: 0))
+                }
+            )
         }
-        emit(
-            catchAPIErrors(
-                isSuccess = playlists != null && totalSize != null,
-                error = playlistsResponse.error
-            ) {
-                Ok(ListOfPlaylists(playlists = playlists ?: listOf(), totalSize = totalSize ?: 0))
-            }
-        )
     }
 
     override suspend fun createPlaylist(
@@ -96,6 +113,19 @@ class PlaylistsRepositoryImpl(
                     }
                 }
             )
+        }
+    }
+
+    override fun pinPlaylist(playlist: Playlist) {
+        with(playlist) {
+            database.dao.upsertPlaylist(PlaylistEntity(
+                name = name,
+                description = description,
+                imageUrl = imageUrl,
+                isPinned = true,
+                pinDate = Instant.now(),
+                id = id
+            ))
         }
     }
 }

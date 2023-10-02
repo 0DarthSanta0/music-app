@@ -10,6 +10,7 @@ import com.example.music_app.data.data_store.DataStoreManagerImpl
 import com.example.music_app.data.models.ListOfPlaylists
 import com.example.music_app.data.models.Playlist
 import com.example.music_app.data.repositories.playlists.PlaylistsRepositoryImpl
+import com.example.music_app.domain.use_cases.PinPlaylistUseCase
 import com.example.music_app.domain.use_cases.RequestPlaylistsUseCase
 import com.example.music_app.ui.screens.core.onScrollIndexChange
 import com.example.music_app.ui.screens.core.reLoginCheck
@@ -23,7 +24,8 @@ private const val LIMIT = 10
 private const val INDEX = 6
 
 class PlaylistsViewModel(
-    private val requestPlaylistsUseCase: RequestPlaylistsUseCase
+    private val requestPlaylistsUseCase: RequestPlaylistsUseCase,
+    private val pinPlaylistUseCase: PinPlaylistUseCase,
 ) : ViewModel() {
     private var totalSize = 0
     private var offset = 0
@@ -60,6 +62,10 @@ class PlaylistsViewModel(
         }
     }
 
+    private fun pinPlaylist(playlist: Playlist) {
+        pinPlaylistUseCase(playlist)
+    }
+
     fun onUIScrollIndexChange(firstVisibleItemIndex: Int) {
         onScrollIndexChange(
             firstVisibleItemIndex = firstVisibleItemIndex,
@@ -88,11 +94,13 @@ class PlaylistsViewModel(
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
+                val playlistRepository = PlaylistsRepositoryImpl(DataStoreManagerImpl)
                 PlaylistsViewModel(
                     requestPlaylistsUseCase = RequestPlaylistsUseCase(
-                        playlistsRepository = PlaylistsRepositoryImpl(
-                            DataStoreManagerImpl
-                        )
+                        playlistsRepository = playlistRepository
+                    ),
+                    pinPlaylistUseCase = PinPlaylistUseCase(
+                        playlistsRepository = playlistRepository
                     )
                 )
             }
