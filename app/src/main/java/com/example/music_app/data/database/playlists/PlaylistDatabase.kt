@@ -2,6 +2,8 @@ package com.example.music_app.data.database.playlists
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.example.music_app.data.database.playlists.dao.PlaylistDao
+import com.example.music_app.data.database.playlists.models.PlaylistEntity
 
 @Database(
     entities = [PlaylistEntity::class],

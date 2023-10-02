@@ -3,6 +3,7 @@ package com.example.music_app.domain.repositories
 import com.example.music_app.AppErrors
 import com.example.music_app.constants.PLAYLIST_TYPE
 import com.example.music_app.data.models.ListOfPlaylists
+import com.example.music_app.data.models.Playlist
 import com.github.michaelbull.result.Result
 import kotlinx.coroutines.flow.Flow
 
@@ -24,4 +25,6 @@ interface PlaylistsRepository {
         prefix: String,
         type: String = PLAYLIST_TYPE
     ): Flow<Result<ListOfPlaylists, AppErrors>>
+
+    fun pinPlaylist(playlist: Playlist)
 }
